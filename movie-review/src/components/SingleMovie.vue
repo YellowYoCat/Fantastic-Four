@@ -1,1 +1,13 @@
-<h3>This will be the Single Movie page</h3>
+<template>
+    <div>
+      <h1>Single Movie</h1>
+      <p>Details about the selected movie.</p>
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    name: 'SingleMovie',
+  };
+  </script>
+  

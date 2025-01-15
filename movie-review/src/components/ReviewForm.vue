@@ -1,1 +1,13 @@
-<h3>This will be the Review Form</h3>
+<template>
+    <div>
+      <h1>Review Form</h1>
+      <p>Submit your movie review here.</p>
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    name: 'ReviewForm',
+  };
+  </script>
+  
