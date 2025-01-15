@@ -1,14 +1,11 @@
 
 <template>
-  <!-- <div class="hello">
-    <ul>
-      <router-link to="/Login"><button>Login</button></router-link>
-    </ul>
-  </div> -->
+
   
   <div class="Body">
     <div class="WelcomeMessage">
       <h1>Welcome!</h1>
+      <img alt="logo" class="logo" src="../assets/logo.png">
       <h3>To Our Movie Review Website</h3>
       <br/>
       <h3>Navigate to {insert page link here}. <br/>To view all the movies we have to offer!</h3>
