@@ -1,10 +1,10 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <Home msg="Welcome to Your Vue.js App"/>
+  <Home msg="Welcome to Your Vue.js App"/> 
 </template>
 
 <script>
 import Home from './components/Home.vue'
+import './css/main.css'
 
 export default {
   name: 'App',

@@ -1,12 +1,23 @@
 <template>
   <div class="hello">
-    
-    <h3>This will be the nav</h3>
     <ul>
-      <router-link to="/Login">Login</router-link>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
+      <img alt="logo" class="logo" src="../assets/Logo.png">
+      <router-link to="/Login"><button>Login</button></router-link>
+      <a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener"><button>babel</button></a>
+      <a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener"><button>eslint</button></a>
     </ul>
+  </div>
+  
+  <div class="Body">
+    <div class="WelcomeMessage">
+      <h1>Welcome!</h1>
+      <h3>To Our Movie Review Website</h3>
+      <br/>
+      <h3>Navigate to {insert page link here}. <br/>To view all the movies we have to offer!</h3>
+      <img alt="logo" class="WelcomeMessageLogo" src="../assets/Logo.png">
+      <br>
+      <p>The Fantastic Four Team</p>
+    </div>
   </div>
 </template>
 

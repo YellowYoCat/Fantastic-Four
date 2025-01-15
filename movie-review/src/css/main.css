@@ -1,3 +1,41 @@
-body{
-    background-color: black;
+.hello{
+    /*Need to make it so that the nav sits at the top and fill the top portion of the pages */
+}
+
+.logo{
+    width: 100px;
+    height: 100px;
+    border: white solid 2px;
+    border-radius: 60px;
+    margin-top: 6px;
+}
+
+ul{
+    background-color: #162139;
+    display:flex;
+    flex-direction: row;
+} 
+
+button{
+    margin: 30px;
+    width: 222px;
+    height: 62px;
+}
+
+.WelcomeMessage{
+    background: #8DBAD7;
+    color: white;
+    width: 834px;
+    height: 710px;
+    justify-self: center;
+    border-radius: 25px;
+    font-size: 25px;
+}
+
+.WelcomeMessageLogo {
+    width: 300px;
+    height: 300px;
+    box-shadow: 0 4px 8px rgba(5, 5, 5, 0.5); 
+    border: white solid 2px;
+    border-radius: 200px; 
 }
