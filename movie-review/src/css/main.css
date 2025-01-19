@@ -1,6 +1,14 @@
-.hello{
-    /*Need to make it so that the nav sits at the top and fill the top portion of the pages */
-}
+
+
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-image: url("../assets/background.jpg");
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
 
 .logo{
     width: 200px;
@@ -22,7 +30,7 @@ button{
     height: 62px;
 }
 
-.WelcomeMessage{
+.card{
     background: #8DBAD7;
     color: white;
     width: 834px;
@@ -39,3 +47,29 @@ button{
     border: white solid 2px;
     border-radius: 200px; 
 }
+
+
+  
+  .nav{
+    background-color: #172139;
+  }
+  
+  .nav-button{
+    background-color: #1974cf;
+    color: white;
+    border-radius: 25px;
+    border: solid 5px white;
+    
+  }
+
+  .Regclass{
+    padding: -10px;
+  }
+
+  input{
+    padding: 10px;
+    border-radius: 25px;
+    border: solid 3px white;
+    background-color: #b4cede;
+    width: 300px;
+  }

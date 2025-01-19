@@ -58,25 +58,3 @@ export default {
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
-.nav{
-  background-color: #172139;
-}
-
-.nav-button{
-  background-color: #1974cf;
-  color: white;
-  border-radius: 25px;
-  border: solid 5px white;
-  
-}
-</style>

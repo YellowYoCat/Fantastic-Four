@@ -3,7 +3,7 @@
 
   
   <div class="Body">
-    <div class="WelcomeMessage">
+    <div class="card">
       <h1>Welcome!</h1>
       <img alt="logo" class="logo" src="../assets/logo.png">
       <h3>To Our Movie Review Website</h3>
