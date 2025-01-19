@@ -1,13 +1,28 @@
 <template>
+    <div class="card">
+    <h1>Register</h1>
     <div>
-      <h1>Register</h1>
-      <p>Create an account to get started.</p>
+      <h4 class="Regword">Email</h4>
+      <input v-model="Text" type="email" placeholder="Enter Email" />
+      <h4 class="Regword">Password</h4>
+      <input type="password" v-model="password" placeholder="Enter Password" />
+      <h4 class="Regword">Confirm Password</h4>
+      <input type="password" v-model="password" placeholder="Confirm Password" />
+      <br>
+      <button class="loginbtn" @click="register">Register</button>
     </div>
-  </template>
-  
+
+  </div>
+</template>
+
   <script>
   export default {
-    name: 'RegisterView', // Use a multi-word name
+    name: 'RegisterView', 
+    data() {
+    return {
+      password: ""
+    }
+  }
   };
   </script>
   
