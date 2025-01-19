@@ -11,6 +11,9 @@ import SingleMovie from './components/SingleMovie.vue';
 
 import './css/main.css';
 
+
+
+
 const routes = {
   '/': Home,
   '/about': AboutUs,
@@ -41,6 +44,9 @@ export default {
 </script>
 
 <template>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&family=Jolly+Lodger&family=Luckiest+Guy&display=swap" rel="stylesheet">
   <div id="app">
     <nav class="nav">
 <!--       
