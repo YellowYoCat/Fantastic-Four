@@ -12,6 +12,8 @@
       <h5 class="over">Duration</h5>
       <h5 class="over">Ratings</h5>
       <h5 class="over">Summary</h5>
+      <br>
+      <a href="#/reviewform">  <button class="formbtn">review movie</button> </a>
     </div>
   </div>
 
