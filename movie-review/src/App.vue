@@ -8,6 +8,7 @@ import Register from './components/Register.vue';
 import ReviewForm from './components/ReviewForm.vue';
 import SingleMovie from './components/SingleMovie.vue';
 
+
 import './css/main.css';
 
 const routes = {
@@ -41,14 +42,17 @@ export default {
 
 <template>
   <div id="app">
-    <nav>
-      <a href="#/">Home</a>
+    <nav class="nav">
+<!--       
       <a href="#/about">About</a>
-      <a href="#/login">Login</a>
-      <a href="#/register">Register</a>
-      <a href="#/movie">Movies</a>
       <a href="#/reviewform">Review Form</a>
-      <a href="#/singlemovie">Single Movie</a>
+      <a href="#/singlemovie">Single Movie</a>  -->
+
+
+      <a href="#/"> <button class="nav-button">  Home </button> </a>
+      <a href="#/movie">  <button class="nav-button"> Movies</button> </a>
+      <a href="#/login"> <button class="nav-button">Login</button> </a>
+      <a href="#/register">  <button class="nav-button"> Register</button> </a>
     </nav>
     <component :is="CurrentComponent" />
   </div>
@@ -64,13 +68,15 @@ export default {
   margin-top: 60px;
 }
 
-nav a {
-  margin: 0 10px;
-  text-decoration: none;
-  color: #42b983;
+.nav{
+  background-color: #172139;
 }
 
-nav a:hover {
-  text-decoration: underline;
+.nav-button{
+  background-color: #1974cf;
+  color: white;
+  border-radius: 25px;
+  border: solid 5px white;
+  
 }
 </style>

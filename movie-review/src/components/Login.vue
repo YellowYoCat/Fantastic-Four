@@ -7,7 +7,7 @@
   
   <script>
   export default {
-    name: 'LoginView', // Use a multi-word name
+    name: 'LoginView', 
   };
   </script>
   
