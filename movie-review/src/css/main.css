@@ -1,11 +1,21 @@
+body, html{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: url("../assets/background.jpg");
+  background-size: cover; 
+  background-repeat: no-repeat; 
+  background-position: center; 
+  height: 100vh; 
+  padding: 0; 
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 
 .luckiest-guy-regular {
@@ -121,4 +131,68 @@ input {
   border: solid 3px white;
   background-color: #b4cede;
   width: 300px;
+}
+
+/* For all Movies page */
+.container {
+  display: flex;
+  flex: 1;
+}
+.sidebar {
+  color: white;   
+  background-color: #172139;
+  border-right: solid black 1px;
+  width: 260px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.1);
+}
+.sidebar .search input {
+  width: 90%;
+  padding: 10px;
+  
+}
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.filter-section {
+  display: flex;
+  flex-direction: column;
+}
+.filters h3 {
+  margin-bottom: 10px;
+}
+.filters ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.filters ul li {
+  display: flex;
+  align-items: center;
+}
+.movie-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px;
+  overflow-y: auto; /* Allows scrolling if content is too long */
+}
+.movie-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+}
+.movie-card img {
+  max-width: 100%;
+  border-radius: 5px;
 }
