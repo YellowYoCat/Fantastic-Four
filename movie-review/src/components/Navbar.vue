@@ -8,7 +8,7 @@
       </div>
   
       
-      <div class="flex space-x-4">
+      <div class="flex space-x-5">
         <button class="nav-button">Home</button>
         <button class="nav-button">Movies</button>
         <button class="nav-button">Sign Up</button>

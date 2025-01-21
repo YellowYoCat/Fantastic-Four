@@ -1,11 +1,21 @@
+body, html{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: url("../assets/background.jpg");
+  background-size: cover; 
+  background-repeat: no-repeat; 
+  background-position: center; 
+  height: 100vh; 
+  padding: 0; 
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 
 .luckiest-guy-regular {
