@@ -113,6 +113,11 @@ button {
   background-color: #172139;
 }
 
+.nav-section {
+  display: flex;
+  
+}
+
 .nav-button {
   background-color: #1974cf;
   color: white;

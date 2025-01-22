@@ -8,7 +8,8 @@
       </div>
   
       
-      <div class="flex space-x-5">
+      <div class="nav-section">
+        <img src="@/assets/logo.png" alt="Logo" class="h-8 w-8">
         <button class="nav-button">Home</button>
         <button class="nav-button">Movies</button>
         <button class="nav-button">Sign Up</button>
