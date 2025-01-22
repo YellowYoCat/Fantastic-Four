@@ -59,6 +59,7 @@ export default {
       <a href="#/movie">  <button class="nav-button"> Movies</button> </a>
       <a href="#/login"> <button class="nav-button">Login</button> </a>
       <a href="#/register">  <button class="nav-button"> Register</button> </a>
+      <a href="#/about"><button class="nav-button">About Us</button></a>
     </nav>
     <component :is="CurrentComponent" />
   </div>

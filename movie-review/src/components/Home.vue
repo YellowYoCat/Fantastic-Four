@@ -10,7 +10,7 @@
       <br/>
       <h3>Navigate to {insert page link here}. <br/>To view all the movies we have to offer!</h3>
       <br>
-      <p>The Fantastic Four Team</p>
+      <p> - The Fantastic Four Team</p>
     </div>
   </div>
 </template>
