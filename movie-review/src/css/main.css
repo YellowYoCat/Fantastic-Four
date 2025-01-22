@@ -17,11 +17,13 @@ body, html{
   text-align: center;
   color: #2c3e50;
 }
+
 .Body {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .luckiest-guy-regular {
   font-family: "Luckiest Guy", serif;
   font-weight: 400;
