@@ -9,6 +9,7 @@
       <h4 class="Regword">Confirm Password</h4>
       <input type="password" v-model="password" placeholder="Confirm Password" />
       <br>
+      <br>
       <button class="loginbtn" @click="register">Register</button>
     </div>
 
