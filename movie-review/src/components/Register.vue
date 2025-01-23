@@ -1,6 +1,6 @@
 <template>
-  <br>
   <div class="card">
+    <br>
     <h1>Register</h1>
     <div>
       <h4 class="Regword">Email</h4>
