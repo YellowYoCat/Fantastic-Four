@@ -4,6 +4,24 @@ body, html {
   padding: 0;
 }
 
+p{
+  letter-spacing: 4px;
+  font-family: "Luckiest Guy", serif;
+  font-weight: 400;
+}
+
+h1{
+  letter-spacing: 4px;
+  font-family: "Luckiest Guy", serif;
+  font-weight: 400;
+}
+
+h2{
+  letter-spacing: 4px;
+  font-family: "Luckiest Guy", serif;
+  font-weight: 400;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
