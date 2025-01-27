@@ -11,25 +11,19 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3000;
+const PORT = 3000;
 const apiKey = '320b4a81527cb06be689a396ecc7be50';
 
-app.use(cor());
-
-app.listen(PORT, (e) => {
-    if (e) {
-        console.log("error");
-    }
-});
+app.use(cors());
 
 
 app.use(cors({ origin: '*' }));
 
-app.listen(port, (err) => {
+app.listen(PORT, (err) => {
     if (err) {
         console.log(err);
     } else {
-        console.log(`Server is running on port ${port}`);
+        console.log(`Server is running on port ${PORT}`);
     }
 });
 
