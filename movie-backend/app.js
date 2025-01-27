@@ -23,6 +23,34 @@ app.listen(PORT, (e) => {
 });
 
 
+app.use(cors({ origin: '*' }));
+
+app.listen(port, (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(`Server is running on port ${port}`);
+    }
+});
+
+
+app.get('/movie/:id', async (req, res) => {
+    const id = req.params.id;
+    const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`;
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            }
+        });
+    }catch{
+        console.log("error");
+    }
+});
+
+
 
 
 const valAPIKey = (req, res, next) => {
