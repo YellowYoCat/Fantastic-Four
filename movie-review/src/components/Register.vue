@@ -1,5 +1,6 @@
 <template>
-    <div class="card">
+  <div class="card">
+    <br>
     <h1>Register</h1>
     <div>
       <h4 class="Regword">Email</h4>
@@ -16,14 +17,13 @@
   </div>
 </template>
 
-  <script>
-  export default {
-    name: 'RegisterView', 
-    data() {
+<script>
+export default {
+  name: 'RegisterView',
+  data() {
     return {
       password: ""
     }
   }
-  };
-  </script>
-  
+};
+</script>

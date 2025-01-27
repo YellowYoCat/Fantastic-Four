@@ -1,5 +1,6 @@
 <template>
   <div class="card">
+    <br>
     <h1>Login</h1>
     <div>
       <h4 class="Regword">Email</h4>
