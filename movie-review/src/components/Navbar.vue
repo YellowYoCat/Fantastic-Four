@@ -1,13 +1,5 @@
 <template>
-    <nav class="bg-blue-900 flex items-center justify-between p-4 shadow-lg">
-
-      <div class="flex items-center">
-        <div class="bg-white rounded-full p-2">
-          <img src="../assets/logo.png" alt="Logo" class="h-8 w-8">
-        </div>
-      </div>
-  
-      
+    <nav>
       <div class="nav-section">
         <img src="@/assets/logo.png" alt="Logo" class="h-8 w-8">
         <button class="nav-button">Home</button>

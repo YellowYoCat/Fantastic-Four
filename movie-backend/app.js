@@ -10,26 +10,43 @@ const { saveUser } = require('./dal'); // Import database abstraction layer func
 
 const app = express();
 const PORT = 3000;
+const apiKey = '320b4a81527cb06be689a396ecc7be50';
 
-// Middleware
 app.use(cors());
-app.use(bodyParser.json()); // for parsing JSON request bodies
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing form submissions
 
-// Routes
 
-// Test the server
-app.get('/', (req, res) => {
-    res.send("Welcome to the Review Everything! Movie API");
+app.use(cors({ origin: '*' }));
+
+app.listen(PORT, (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(`Server is running on port ${PORT}`);
+    }
 });
 
-// Search movies by title
+
+app.get('/movie/:id', async (req, res) => {
+    const id = req.params.id;
+    const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`;
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            }
+        });
+    }catch{
+        console.log("error");
+    }
+});
+
 app.get('/movies/search', async (req, res) => {
     const { query } = req.query; // ?query=movieTitle
     if (!query) {
         return res.status(400).send({ error: "Query parameter is required" });
     }
-
     try {
         const response = await axios.get(
             `https://api.themoviedb.org/3/search/movie`,

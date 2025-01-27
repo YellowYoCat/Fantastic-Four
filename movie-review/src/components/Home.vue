@@ -8,7 +8,11 @@
       <img alt="logo" class="logo" src="../assets/logo.png">
       <h3>To Our Movie Review Website</h3>
       <br/>
-      <h3>Navigate to {insert page link here}. <br/>To view all the movies we have to offer!</h3>
+      <h3>
+        Navigate to <a href="/all-movies.html#/movie">All Movies</a>. <br />
+        To view all the movies we have to offer!
+      </h3>
+
       <br>
       <p> - The Fantastic Four Team</p>
     </div>
