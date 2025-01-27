@@ -1,14 +1,12 @@
-// Movie api key
-// 320b4a81527cb06be689a396ecc7be50
-// Movie API key
+// Movie API Key
 const MOVIE_API_KEY = "320b4a81527cb06be689a396ecc7be50";
-
-console.log("is this working?");
 
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
+const { saveUser } = require('./dal'); // Import database abstraction layer functions
 
 const app = express();
 const PORT = 3000;
@@ -76,16 +74,35 @@ app.get('/movies/search', async (req, res) => {
     }
 });
 
+// User Sign-Up Route
+app.post('/api/signup', async (req, res) => {
+    const { email, password } = req.body;
 
-const valAPIKey = (req, res, next) => {
-    const apiKey = req.header('api-key');
-    if (apiKey === '320b4a81527cb06be689a396ecc7bew50') {
-        next();
-    } else {
-        res.status(401).send({ error: 'Unauthorized' });
-
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
     }
-}
 
- 
+    try {
+        // Hash and salt the password
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+        // Save user to database using DAL
+        const user = { email, password: hashedPassword };
+        await saveUser(user);
+
+        res.status(201).json({ message: "User registered successfully!" });
+    } catch (error) {
+        console.error("Error during user registration:", error.message);
+        res.status(500).json({ error: "Failed to register user" });
+    }
+});
+
+// Start the server
+app.listen(PORT, (e) => {
+    if (e) {
+        console.log("error");
+    } else {
+        console.log(`Server is running on port ${PORT}`);
+    }
+});
