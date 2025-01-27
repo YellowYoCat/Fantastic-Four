@@ -16,9 +16,11 @@ const apiKey = '320b4a81527cb06be689a396ecc7be50';
 
 app.use(cor());
 
-app.listen(PORT, (e) => {
-    if (e) {
-        console.log("error");
+app.listen(port, (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(`Server is running on port ${port}`);
     }
 });
 
