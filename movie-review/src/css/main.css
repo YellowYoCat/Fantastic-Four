@@ -1,33 +1,47 @@
+/* General Reset */
 body, html {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
+/* App Container */
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: url("../assets/background.jpg");
-  background-size: cover; 
-  background-repeat: no-repeat; 
-  background-position: center; 
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   background-attachment: fixed; /* Keeps the background fixed while scrolling */
-  min-height: 100%; /* Ensures content beyond viewport still displays background */
+  min-height: 100%;
   color: #2c3e50;
   text-align: center;
 }
 
+/* General Layout */
 .Body {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Typography */
 .luckiest-guy-regular {
   font-family: "Luckiest Guy", serif;
   font-weight: 400;
   font-style: normal;
+}
+
+/* Images */
+.logoPic {
+  width: 100px;
+  height: 100px;
+  border: white solid 6px;
+  border-radius: 105px;
+  margin-top: 25px;
+  margin-bottom: -25px;
 }
 
 .logo {
@@ -35,76 +49,9 @@ body, html {
   height: 200px;
   border: white solid 6px;
   border-radius: 105px;
-  margin-top: 6px;
+  margin-top: 25px;
+  margin-bottom: -25px;
 }
-
-ul {
-  background-color: #162139;
-  display: flex;
-  flex-direction: row;
-}
-
-button {
-  font-family: "Luckiest Guy", serif;
-  letter-spacing: 4px;
-  font-size: xx-large;
-  margin: 30px;
-  width: 222px;
-  height: 62px;
-}
-
-.card {
-  font-family: "Luckiest Guy", serif;
-  letter-spacing: 4px;
-  background: #8DBAD7;
-  color: white;
-  width: 834px;
-  height: 710px;
-  justify-self: center;
-  border-radius: 25px;
-  font-size: 25px;
-  margin-top: 70px;
-}
-
-.moviereview {
-  background: #8DBAD7;
-  color: white;
-  width: 834px;
-  height: 710px;
-  margin: 125px;
-  justify-self: right;
-  border-radius: 25px;
-  font-size: 25px;
-
-}
-
-.imgholder {}
-
-.formbtn {
-  background-color: #034180;
-  border-radius: 25px;
-  color: white;
-
-}
-.over {
-  font-family: "Luckiest Guy", serif;
-  letter-spacing: 4px;
-  justify-self: left;
-  margin: 35px;
-}
-
-
-.formword {
-  font-family: "Luckiest Guy", serif;
-  letter-spacing: 4px;
-  justify-self: left;
-  margin: 35px;
-}
-
-.forminput{
-  /* trying to make the input box to the */
-}
-
 
 .WelcomeMessageLogo {
   width: 300px;
@@ -114,29 +61,36 @@ button {
   border-radius: 200px;
 }
 
-
-
+/* Navigation */
 .nav {
   background-color: #172139;
 }
-
 .nav-section {
   display: flex;
-  
 }
-
 .nav-button {
   background-color: #1974cf;
   color: white;
   border-radius: 25px;
   border: solid 5px white;
-
 }
 
-.Regclass {
-  padding: -10px;
+/* Buttons */
+button {
+  font-family: "Luckiest Guy", serif;
+  letter-spacing: 4px;
+  font-size: xx-large;
+  margin: 30px;
+  width: 222px;
+  height: 62px;
+}
+.formbtn {
+  background-color: #034180;
+  border-radius: 25px;
+  color: white;
 }
 
+/* Forms */
 input {
   padding: 10px;
   border-radius: 25px;
@@ -144,42 +98,44 @@ input {
   background-color: #b4cede;
   width: 300px;
 }
+.formword {
+  font-family: "Luckiest Guy", serif;
+  letter-spacing: 4px;
+  justify-self: left;
+  margin: 35px;
+}
+.over {
+  font-family: "Luckiest Guy", serif;
+  letter-spacing: 4px;
+  justify-self: left;
+  margin: 35px;
+}
 
-/* For all Movies page */
-.container {
+/* Cards */
+.card, .moviereview {
+  font-family: "Luckiest Guy", serif;
+  letter-spacing: 4px;
+  background: #8DBAD7;
+  color: white;
+  width: 834px;
+  height: 710px;
+  border-radius: 25px;
+  font-size: 25px;
+}
+.card {
+  justify-self: center;
+  margin-top: 70px;
+}
+.moviereview {
+  margin: 125px;
+  justify-self: right;
+}
+
+/* Lists */
+ul {
+  background-color: #162139;
   display: flex;
-  flex: 1;
-}
-.sidebar {
-  color: white;   
-  background-color: #172139;
-  border-right: solid black 1px;
-  width: 260px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.1);
-  font-family: 'Luckiest Guy', cursive;
-  letter-spacing: 2px;
-  font-size: 20px;
-}
-.sidebar .search input {
-  width: 90%;
-  padding: 10px;
-  
-}
-.filters {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.filter-section {
-  display: flex;
-  flex-direction: column;
-}
-.filters h3 {
-  margin-bottom: 10px;
+  flex-direction: row;
 }
 .filters ul {
   list-style: none;
@@ -195,6 +151,50 @@ input {
   padding-right: 20px;
   padding-left: 20px;
 }
+
+/* Sidebar */
+.sidebar {
+  color: white;
+  background-color: #172139;
+  border-right: solid black 1px;
+  width: 260px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.1);
+  font-family: 'Luckiest Guy', cursive;
+  letter-spacing: 2px;
+  font-size: 20px;
+}
+.sidebar .search input {
+  width: 90%;
+  padding: 10px;
+}
+
+/* Filters */
+.filters {
+  display: flex-start;
+  flex-direction: column;
+  gap: 20px;
+  padding: 35px;
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+}
+.filters h3 {
+  margin-bottom: 10px;
+  padding-right: 20px;
+}
+
+/* Movie Grid */
+.container {
+  display: flex;
+  flex: 1;
+}
+
 .movie-grid {
   flex: 1;
   display: grid;
@@ -212,8 +212,4 @@ input {
 .movie-card img {
   max-width: 100%;
   border-radius: 5px;
-}
-
-.search {
-  padding-right: 20px;
 }
