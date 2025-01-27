@@ -55,6 +55,7 @@ export default {
       <a href="#/singlemovie">Single Movie</a>  -->
 
 
+      <img src="@/assets/logo.png" alt="Logo" class="logoPic">
       <a href="#/"> <button class="nav-button">  Home </button> </a>
       <a href="#/movie">  <button class="nav-button"> Movies</button> </a>
       <a href="#/login"> <button class="nav-button">Login</button> </a>
