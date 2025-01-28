@@ -4,7 +4,7 @@ import Home from './components/Home.vue';
 import Login from './components/Login.vue';
 import AboutUs from './components/AboutUs.vue';
 import AllMovie from './components/AllMovie.vue';
-import Register from './components/Register.vue';
+import Register from './components/UserRegister.vue';
 import ReviewForm from './components/ReviewForm.vue';
 import SingleMovie from './components/SingleMovie.vue';
 
