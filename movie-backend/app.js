@@ -18,8 +18,6 @@ app.use(bodyParser.json());
 
 
 
-
-
 app.get('/movie/:id', async (req, res) => {
     const id = req.params.id;
     const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`;
@@ -36,7 +34,7 @@ app.get('/movie/:id', async (req, res) => {
     }
 });
 
-app.get('/movies/search', async (req, res) => {
+app.get('/movie/search', async (req, res) => {
     const { query } = req.query; // ?query=movieTitle
     if (!query) {
         return res.status(400).send({ error: "Query parameter is required" });
@@ -46,7 +44,7 @@ app.get('/movies/search', async (req, res) => {
             `https://api.themoviedb.org/3/search/movie`,
             {
                 params: {
-                    api_key: MOVIE_API_KEY,
+                    api_key:apiKey,
                     query, // Search query
                 },
             }
