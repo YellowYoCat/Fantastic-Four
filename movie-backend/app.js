@@ -1,5 +1,5 @@
 // Movie API Key
-const MOVIE_API_KEY = "320b4a81527cb06be689a396ecc7be50";
+// 320b4a81527cb06be689a396ecc7be50
 
 const express = require('express');
 const cors = require('cors');
