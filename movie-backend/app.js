@@ -6,7 +6,7 @@ const cors = require('cors');
 const axios = require('axios');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
-const { saveUser } = require('./dal'); // Import database abstraction layer functions
+const { saveUser } = require('./dal'); 
 
 const app = express();
 const port = 3000;
@@ -45,11 +45,11 @@ app.get('/movie/search', async (req, res) => {
             {
                 params: {
                     api_key:apiKey,
-                    query, // Search query
+                    query, 
                 },
             }
         );
-        const movies = response.data.results; // List of movies
+        const movies = response.data.results; 
         res.status(200).json(movies);
     } catch (error) {
         console.error("Error fetching movies:", error.message);
@@ -57,7 +57,7 @@ app.get('/movie/search', async (req, res) => {
     }
 });
 
-// User Sign-Up Route
+
 app.post('/api/signup', async (req, res) => {
     const { email, password } = req.body;
 
@@ -66,11 +66,11 @@ app.post('/api/signup', async (req, res) => {
     }
 
     try {
-        // Hash and salt the password
+        
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Save user to database using DAL
+        
         const user = { email, password: hashedPassword };
         await saveUser(user);
 
