@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // MongoDB Connection
-//const DB_URI = ""; - Need to get the URI for the UserDB then we can uncomment this
+const DB_URI = "mongodb+srv://mmitchell:Tuff12top@cluster0.fm4mkz2.mongodb.net/";
 mongoose.connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB connection error:", err));
