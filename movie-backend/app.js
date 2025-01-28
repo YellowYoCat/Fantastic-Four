@@ -9,30 +9,13 @@ const bcrypt = require('bcrypt');
 const { saveUser } = require('./dal'); // Import database abstraction layer functions
 
 const app = express();
-const PORT = 3000;
+const port = 3000;
 const apiKey = '320b4a81527cb06be689a396ecc7be50';
-
-
-
-app.listen(port, (err) => {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log(`Server is running on port ${port}`);
-    }
-});
-
-
 
 app.use(cors({ origin: '*' }));
 
-app.listen(port, (err) => {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log(`Server is running on port ${port}`);
-    }
-});
+
+
 
 
 app.get('/movie/:id', async (req, res) => {
@@ -99,10 +82,10 @@ app.post('/api/signup', async (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, (e) => {
+app.listen(port, (e) => {
     if (e) {
         console.log("error");
     } else {
-        console.log(`Server is running on port ${PORT}`);
+        console.log(`Server is running on port ${port}`);
     }
 });
