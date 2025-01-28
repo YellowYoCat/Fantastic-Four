@@ -1,6 +1,8 @@
 // Movie API Key
 // 320b4a81527cb06be689a396ecc7be50
 
+console.log("does this work");
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
