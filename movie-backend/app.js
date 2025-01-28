@@ -1,12 +1,14 @@
 // Movie API Key
 // 320b4a81527cb06be689a396ecc7be50
 
+console.log("does this work");
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
-const { saveUser } = require('./dal'); // Import database abstraction layer functions
+const { saveUser } = require('./dal'); 
 
 const app = express();
 const port = 3000;
@@ -14,8 +16,6 @@ const apiKey = '320b4a81527cb06be689a396ecc7be50';
 
 app.use(cors({ origin: '*' }));
 app.use(bodyParser.json());
-
-
 
 
 
@@ -36,22 +36,22 @@ app.get('/movie/:id', async (req, res) => {
     }
 });
 
-app.get('/movies/search', async (req, res) => {
+app.get('/movie/search', async (req, res) => {
     const { query } = req.query; // ?query=movieTitle
     if (!query) {
         return res.status(400).send({ error: "Query parameter is required" });
     }
     try {
         const response = await axios.get(
-            `https://api.themoviedb.org/3/search/movie`,
+            `https://api.themoviedb.org/3/search/movie`, //?api_keys${apiKey}
             {
                 params: {
-                    api_key: MOVIE_API_KEY,
-                    query, // Search query
+                    api_key:apiKey,
+                    query, 
                 },
             }
         );
-        const movies = response.data.results; // List of movies
+        const movies = response.data.results; 
         res.status(200).json(movies);
     } catch (error) {
         console.error("Error fetching movies:", error.message);
@@ -59,7 +59,7 @@ app.get('/movies/search', async (req, res) => {
     }
 });
 
-// User Sign-Up Route
+
 app.post('/api/signup', async (req, res) => {
     const { email, password } = req.body;
 
@@ -68,11 +68,11 @@ app.post('/api/signup', async (req, res) => {
     }
 
     try {
-        // Hash and salt the password
+        
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Save user to database using DAL
+        
         const user = { email, password: hashedPassword };
         await saveUser(user);
 
