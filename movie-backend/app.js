@@ -13,6 +13,8 @@ const port = 3000;
 const apiKey = '320b4a81527cb06be689a396ecc7be50';
 
 app.use(cors({ origin: '*' }));
+app.use(bodyParser.json());
+
 
 
 
@@ -81,7 +83,7 @@ app.post('/api/signup', async (req, res) => {
     }
 });
 
-// Start the server
+
 app.listen(port, (e) => {
     if (e) {
         console.log("error");
