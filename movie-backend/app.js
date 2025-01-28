@@ -43,7 +43,7 @@ app.get('/movie/search', async (req, res) => {
     }
     try {
         const response = await axios.get(
-            `https://api.themoviedb.org/3/search/movie`, //?api_keys${apiKey}
+            `https://api.themoviedb.org/3/search/movie?api_keys${apiKey}`, //?api_keys${apiKey}
             {
                 params: {
                     api_key:apiKey,
