@@ -25,29 +25,29 @@
       </p>
       <h2>Meet the Team</h2>
       <p>
-        Meet the Team:
-        Our team is made up of four film enthusiasts who form an unbeatable review squad:
+        <i>Our team is made up of four film enthusiasts who form an unbeatable review squad:</i>
       </p>
 
       <p>
-        Mr. Fantastic (Erin): The analytical mastermind who dives deep into a film’s structure, themes, and nuances to
+        <bold>Mr. Fantastic (Erin):</bold> The analytical mastermind who dives deep into a film’s structure, themes, and nuances to
         deliver thoughtful critiques.
       </p>
       <p>
-        Invisible Woman (Chelsea): The heart of the team, with an eye for visual storytelling and artistic direction
+        <bold>Invisible Woman (Chelsea):</bold> The heart of the team, with an eye for visual storytelling and artistic direction
         that makes a movie stand out.
       </p>
       <p>
-        The Thing (Lauren): Our tough but fair reviewer who doesn’t shy away from calling out flaws but celebrates the
+        <bold>The Thing (Lauren):</bold> Our tough but fair reviewer who doesn’t shy away from calling out flaws but celebrates the
         raw charm of a good film.
       </p>
       <p>
-        Human Torch (Johanna): The fun and fiery spirit who adds humor, passion, and excitement to our reviews, making
+        <bold>Human Torch (Johanna):</bold> The fun and fiery spirit who adds humor, passion, and excitement to our reviews, making
         each one a blast to read.
         Together, we’re here to guide you through the cinematic universe, ensuring your next watch is always fantastic!
       </p>
     </div>
   </div>
+  <br>
 </template>
 
 <script>
@@ -64,53 +64,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.about-us {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* Correct flex-based vertical alignment */
-  text-align: center;
-  margin: 5% auto;
-  /* Centers the container horizontally */
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #83AAC5FF;
-  color: white;
-  width: 1300px;
-}
-
-.image-gallery {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 20px 0;
-}
-
-.image-item img {
-  width: 300px;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.content {
-  text-align: left;
-  margin: 20px auto;
-  max-width: 800px;
-  
-}
-
-.content h2 {
-  margin-top: 20px;
-  color: white;
-
-}
-
-.content p {
-  line-height: 1.6;
-  color: #E6E6E6FF;
-}
-</style>
