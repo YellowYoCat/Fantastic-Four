@@ -36,22 +36,23 @@ app.get('/movie/:id', async (req, res) => {
     }
 });
 
-app.get('/movie/search', async (req, res) => {
+app.get('/movies/search', async (req, res) => {
     const { query } = req.query; // ?query=movieTitle
     if (!query) {
         return res.status(400).send({ error: "Query parameter is required" });
     }
+
     try {
         const response = await axios.get(
-            `https://api.themoviedb.org/3/search/movie?api_keys${apiKey}`, //?api_keys${apiKey}
+            `https://api.themoviedb.org/3/search/movie`,
             {
                 params: {
                     api_key:apiKey,
-                    query, 
+                    query, // Search query
                 },
             }
         );
-        const movies = response.data.results; 
+        const movies = response.data.results; // List of movies
         res.status(200).json(movies);
     } catch (error) {
         console.error("Error fetching movies:", error.message);
