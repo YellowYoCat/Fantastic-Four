@@ -40,6 +40,7 @@
             <img :src="movie.image" :alt="movie.title" class="movie-image " />
           </button>
           <h4 class="luckiest-guy-regular">{{ movie.title }}</h4>
+
         </div>
       </main>
     </div>
@@ -47,21 +48,15 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       searchQuery: "",
       selectedGenres: [],
       selectedRatings: [],
-      movies: [
-        { id: 1, title: "Fantastic 4", genre: "Action", rating: "PG-13", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/oeMpEsjmiT9PEJbRM1Fm7TZ1dE0.jpg", },
-        { id: 2, title: "Deadpool", genre: "Action", rating: "R", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/3E53WEZJqP6aM84D8CckXx4pIHw.jpg" },
-        { id: 3, title: "Shrek", genre: "Animation", rating: "PG", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/iB64vpL3dIObOtMZgX3RqdVdQDc.jpg" },
-        { id: 4, title: "Fantastic 4", genre: "Action", rating: "PG-13", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/oeMpEsjmiT9PEJbRM1Fm7TZ1dE0.jpg", },
-        { id: 5, title: "Deadpool", genre: "Action", rating: "R", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/3E53WEZJqP6aM84D8CckXx4pIHw.jpg" },
-        { id: 6, title: "Shrek", genre: "Animation", rating: "PG", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/iB64vpL3dIObOtMZgX3RqdVdQDc.jpg" },
-        // Add more movies here...
-      ],
+      movies: [],
       genres: ["Action", "Animation", "Drama", "Comedy"],
       ratings: ["G", "PG", "PG-13", "R"],
       filteredMovies: [],
@@ -82,9 +77,45 @@ export default {
         return matchesSearch && matchesGenre && matchesRating;
       });
     },
+
+    // Fetch movies from your backend API or popular movies if no search query is entered
+    fetchMovies() {
+      let apiUrl;
+      if (this.searchQuery) {
+        // Fetch movies based on search query
+        apiUrl = `http://localhost:3000/api/movies/search?query=${this.searchQuery}`;
+      } else {
+        // Fetch popular movies if no search query is entered
+        apiUrl = 'https://api.themoviedb.org/3/movie/popular?api_key=320b4a81527cb06be689a396ecc7be50'; // Popular movies URL
+      }
+
+      axios.get(apiUrl)
+        .then((response) => {
+          // If a search query, just use the search results
+          let moviesData = response.data.results || response.data; // if it's search results or popular data
+
+          // Construct the full image URL for each movie
+          this.movies = moviesData.map((movie) => {
+            return {
+              ...movie,
+              image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`, // Add image base URL
+            };
+          });
+          this.filterMovies(); // Re-filter the movies based on any active filters
+        })
+        .catch((error) => {
+          console.error("Error fetching movies:", error);
+        });
+    }
+  },
+  watch: {
+    // Automatically call fetchMovies when searchQuery changes
+    searchQuery() {
+      this.fetchMovies(); // Refetch the movies every time the search query is modified
+    }
   },
   mounted() {
-    this.filteredMovies = this.movies; // Show all movies by default
+    this.fetchMovies(); // Fetch movies when the component is mounted
   },
 };
 </script>
