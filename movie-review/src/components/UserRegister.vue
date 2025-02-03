@@ -13,7 +13,7 @@
       <div>
         <label for="username">Username:</label>
         <br>
-        <input v-model="username" required>
+        <input v-model="username" required />
       </div>
       <br>
       
@@ -25,20 +25,23 @@
       <br>
 
       <div>
-        <label for="password">Confirm Password: </label>
+        <label for="confirmPassword">Confirm Password: </label>
         <br>
-        <input type="password" v-model="password" required />
+        <input type="password" v-model="confirmPassword" required />
       </div>
       <br>
 
-      <button class="loginbtn" @click="register">Register</button>
+      <button class="loginbtn" type="submit">Register</button>
 
     </form>
 
-    <div v-if="showConfirm">
-      <p>Is this your email: {{ email }}?</p>
-      <button @click="confirmEmail(true)">Yes</button>
-      <button @click="confirmEmail(false)">No</button>
+    <!-- Modal for email confirmation -->
+    <div v-if="showConfirm" class="modal">
+      <div class="modal-content">
+        <p>Is this your email: {{ email }}?</p>
+        <button class="loginbtn" @click="confirmEmail(true)">Yes</button>
+        <button class="loginbtn" @click="confirmEmail(false)">No</button>
+      </div>
     </div>
 
   </div>
@@ -52,7 +55,7 @@ export default {
       username: "",
       password: "",
       confirmPassword: "",
-      showConfirm: false,
+      showConfirm: false, // Flag to show the email confirmation modal
       errorMessage: "",
     };
   },
@@ -65,7 +68,7 @@ export default {
       }
 
       this.errorMessage = ""; // Clear any previous error messages
-      this.showConfirm = true;
+      this.showConfirm = true; // Show the email confirmation modal
     },
     confirmEmail(isConfirmed) {
       if (isConfirmed) {
@@ -74,7 +77,7 @@ export default {
           username: this.username,
           password: this.password,
         };
-        fetch("http://localhost:3000/api/register", {
+        fetch("http://localhost:3000/api/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -88,9 +91,33 @@ export default {
           })
           .catch((error) => console.error(error));
       } else {
-        this.showConfirm = false;
+        this.showConfirm = false; // Close the modal if the user clicks "No"
       }
     },
   },
 };
 </script>
+
+<style>
+/* Style for the modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #8DBAD7;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+}
+</style>
