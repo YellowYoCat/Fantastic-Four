@@ -36,8 +36,10 @@
       <!-- Movie Grid -->
       <main class="movie-grid">
         <div class="movie-card" v-for="movie in filteredMovies" :key="movie.id">
-          <img :src="movie.image" :alt="movie.title" />
-          <h4>{{ movie.title }}</h4>
+          <button class="movie-button">
+            <img :src="movie.image" :alt="movie.title" class="movie-image " />
+          </button>
+          <h4 class="luckiest-guy-regular">{{ movie.title }}</h4>
         </div>
       </main>
     </div>
@@ -52,9 +54,12 @@ export default {
       selectedGenres: [],
       selectedRatings: [],
       movies: [
-        { id: 1, title: "Fantastic 4", genre: "Action", rating: "PG-13", image: "fantastic4.jpg" },
-        { id: 2, title: "Deadpool", genre: "Action", rating: "R", image: "deadpool.jpg" },
-        { id: 3, title: "Shrek", genre: "Animation", rating: "PG", image: "shrek.jpg" },
+        { id: 1, title: "Fantastic 4", genre: "Action", rating: "PG-13", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/oeMpEsjmiT9PEJbRM1Fm7TZ1dE0.jpg", },
+        { id: 2, title: "Deadpool", genre: "Action", rating: "R", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/3E53WEZJqP6aM84D8CckXx4pIHw.jpg" },
+        { id: 3, title: "Shrek", genre: "Animation", rating: "PG", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/iB64vpL3dIObOtMZgX3RqdVdQDc.jpg" },
+        { id: 4, title: "Fantastic 4", genre: "Action", rating: "PG-13", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/oeMpEsjmiT9PEJbRM1Fm7TZ1dE0.jpg", },
+        { id: 5, title: "Deadpool", genre: "Action", rating: "R", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/3E53WEZJqP6aM84D8CckXx4pIHw.jpg" },
+        { id: 6, title: "Shrek", genre: "Animation", rating: "PG", image: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/iB64vpL3dIObOtMZgX3RqdVdQDc.jpg" },
         // Add more movies here...
       ],
       genres: ["Action", "Animation", "Drama", "Comedy"],
