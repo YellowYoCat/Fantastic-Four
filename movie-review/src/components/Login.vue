@@ -3,12 +3,16 @@
     <br>
     <h1>Login</h1>
     <div>
-      <h4 class="Regword">Email</h4>
+      <label class="Regword">Email</label>
+      <br>
       <input v-model="email" type="email" placeholder="Enter Email" required />
-      
-      <h4 class="Regword">Password</h4>
+      <br>
+      <br>
+
+      <label class="Regword">Password</label>
+      <br>
       <input type="password" v-model="password" placeholder="Enter Password" required />
-      
+
       <br>
 
       <div v-if="errorMessage" style="color: red;">
@@ -52,8 +56,13 @@ export default {
           throw new Error(data.error || "Login failed");
         }
 
+        // Store the JWT token in localStorage
+        localStorage.setItem('token', data.token);
+
         alert("Login successful!");
-        // Redirect or handle successful login
+
+        // Optionally redirect the user after successful login
+        this.$router.push("/dashboard"); // Assuming you use Vue Router for navigation
       } catch (error) {
         this.errorMessage = error.message;
       }
@@ -70,7 +79,7 @@ export default {
   border: solid 5px white;
 }
 
-.card{
-  
+.card {
+  height: 460px;
 }
 </style>

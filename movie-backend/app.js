@@ -74,17 +74,30 @@ app.post('/api/signup', async (req, res) => {
 // User Login
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
+
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+    }
 
     try {
+        // Find the user by email
         const user = await findUserByEmail(email);
-        if (!user) return res.status(404).json({ error: "User not found" });
 
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Validate the password
         const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) return res.status(401).json({ error: "Invalid credentials" });
 
-        const token = jwt.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: '1h' });
+        if (!validPassword) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
         res.json({ token });
+
     } catch (error) {
         console.error("Login error:", error.message);
         res.status(500).json({ error: "Login failed" });

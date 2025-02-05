@@ -120,4 +120,8 @@ export default {
   max-width: 360px;
   width: 100%;
 }
+
+.card{
+  height: 380px;
+}
 </style>

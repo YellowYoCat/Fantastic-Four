@@ -20,7 +20,19 @@ async function saveUser(userData) {
     await user.save();
 }
 
+// Find User by Email
+async function findUserByEmail(email) {
+    try {
+        const user = await User.findOne({ email }).exec(); 
+        return user;
+    } catch (error) {
+        console.error("Error finding user by email:", error.message);
+        throw error; // Propagate the error
+    }
+}
+
 // Export functions
 module.exports = {
     saveUser,
+    findUserByEmail,
 };
