@@ -36,9 +36,11 @@
       <!-- Movie Grid -->
       <main class="movie-grid">
         <div class="movie-card" v-for="movie in filteredMovies" :key="movie.id">
+          <router-link :to="'/movie/' + movie.id" class="movie-button">
           <button class="movie-button">
             <img :src="movie.image" :alt="movie.title" class="movie-image " />
-          </button>
+          </button> 
+        </router-link>
           <h4 class="luckiest-guy-regular">{{ movie.title }}</h4>
 
         </div>
