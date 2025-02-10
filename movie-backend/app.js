@@ -184,103 +184,103 @@ const Schema = buildSchema(`
 //     }
 // });
 
-// User Registration
-app.post('/api/signup', async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
+// // User Registration
+// app.post('/api/signup', async (req, res) => {
+//     const { email, password } = req.body;
+//     if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
 
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = { email, password: hashedPassword };
-        await saveUser(user);
-        res.status(201).json({ message: "User registered successfully!" });
-    } catch (error) {
-        console.error("User registration error:", error.message);
-        res.status(500).json({ error: "Failed to register user" });
-    }
-});
+//     try {
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const user = { email, password: hashedPassword };
+//         await saveUser(user);
+//         res.status(201).json({ message: "User registered successfully!" });
+//     } catch (error) {
+//         console.error("User registration error:", error.message);
+//         res.status(500).json({ error: "Failed to register user" });
+//     }
+// });
 
-// User Login
-app.post('/api/login', async (req, res) => {
-    const { email, password } = req.body;
+// // User Login
+// app.post('/api/login', async (req, res) => {
+//     const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ error: "Email and password are required" });
-    }
+//     if (!email || !password) {
+//         return res.status(400).json({ error: "Email and password are required" });
+//     }
 
-    try {
-        // Find the user by email
-        const user = await findUserByEmail(email);
+//     try {
+//         // Find the user by email
+//         const user = await findUserByEmail(email);
 
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
+//         if (!user) {
+//             return res.status(404).json({ error: "User not found" });
+//         }
 
-        // Validate the password
-        const validPassword = await bcrypt.compare(password, user.password);
+//         // Validate the password
+//         const validPassword = await bcrypt.compare(password, user.password);
 
-        if (!validPassword) {
-            return res.status(401).json({ error: "Invalid credentials" });
-        }
+//         if (!validPassword) {
+//             return res.status(401).json({ error: "Invalid credentials" });
+//         }
 
-        // Generate JWT token
-        const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
-        res.json({ token });
+//         // Generate JWT token
+//         const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+//         res.json({ token });
 
-    } catch (error) {
-        console.error("Login error:", error.message);
-        res.status(500).json({ error: "Login failed" });
-    }
-});
+//     } catch (error) {
+//         console.error("Login error:", error.message);
+//         res.status(500).json({ error: "Login failed" });
+//     }
+// });
 
-// Submit Review
-app.post('/api/reviews', authenticateToken, async (req, res) => {
-    const { movieId, rating, review } = req.body;
-    if (!movieId || !rating || !review) return res.status(400).json({ error: "All fields are required" });
+// // Submit Review
+// app.post('/api/reviews', authenticateToken, async (req, res) => {
+//     const { movieId, rating, review } = req.body;
+//     if (!movieId || !rating || !review) return res.status(400).json({ error: "All fields are required" });
 
-    try {
-        await saveReview({ movieId, userId: req.user.userId, rating, review });
-        res.status(201).json({ message: "Review submitted successfully!" });
-    } catch (error) {
-        console.error("Error submitting review:", error.message);
-        res.status(500).json({ error: "Failed to submit review" });
-    }
-});
+//     try {
+//         await saveReview({ movieId, userId: req.user.userId, rating, review });
+//         res.status(201).json({ message: "Review submitted successfully!" });
+//     } catch (error) {
+//         console.error("Error submitting review:", error.message);
+//         res.status(500).json({ error: "Failed to submit review" });
+//     }
+// });
 
-// Fetch Reviews for a Movie
-app.get('/api/reviews/:movieId', async (req, res) => {
-    try {
-        const reviews = await getReviewsByMovie(req.params.movieId);
-        res.json(reviews);
-    } catch (error) {
-        console.error("Error fetching reviews:", error.message);
-        res.status(500).json({ error: "Failed to fetch reviews" });
-    }
-});
+// // Fetch Reviews for a Movie
+// app.get('/api/reviews/:movieId', async (req, res) => {
+//     try {
+//         const reviews = await getReviewsByMovie(req.params.movieId);
+//         res.json(reviews);
+//     } catch (error) {
+//         console.error("Error fetching reviews:", error.message);
+//         res.status(500).json({ error: "Failed to fetch reviews" });
+//     }
+// });
 
-// Admin - Delete Review
-app.delete('/api/reviews/:reviewId', authenticateToken, async (req, res) => {
-    try {
-        if (!req.user.isAdmin) return res.status(403).json({ error: "Unauthorized" });
-        await deleteReview(req.params.reviewId);
-        res.json({ message: "Review deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting review:", error.message);
-        res.status(500).json({ error: "Failed to delete review" });
-    }
-});
+// // Admin - Delete Review
+// app.delete('/api/reviews/:reviewId', authenticateToken, async (req, res) => {
+//     try {
+//         if (!req.user.isAdmin) return res.status(403).json({ error: "Unauthorized" });
+//         await deleteReview(req.params.reviewId);
+//         res.json({ message: "Review deleted successfully" });
+//     } catch (error) {
+//         console.error("Error deleting review:", error.message);
+//         res.status(500).json({ error: "Failed to delete review" });
+//     }
+// });
 
-// Admin - Delete User
-app.delete('/api/users/:userId', authenticateToken, async (req, res) => {
-    try {
-        if (!req.user.isAdmin) return res.status(403).json({ error: "Unauthorized" });
-        await deleteUser(req.params.userId);
-        res.json({ message: "User deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting user:", error.message);
-        res.status(500).json({ error: "Failed to delete user" });
-    }
-});
+// // Admin - Delete User
+// app.delete('/api/users/:userId', authenticateToken, async (req, res) => {
+//     try {
+//         if (!req.user.isAdmin) return res.status(403).json({ error: "Unauthorized" });
+//         await deleteUser(req.params.userId);
+//         res.json({ message: "User deleted successfully" });
+//     } catch (error) {
+//         console.error("Error deleting user:", error.message);
+//         res.status(500).json({ error: "Failed to delete user" });
+//     }
+// });
 //#endregion
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
