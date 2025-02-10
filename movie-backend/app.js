@@ -76,6 +76,50 @@ const Schema = buildSchema(`
             }
         },
 
+        signup: async ({query}) => {
+            try {
+                
+            } catch (err) {
+                throw new err("failed to register user")
+            }
+        },
+
+        login: async ({email, password}) => {
+            try {
+                
+            } catch (err) {
+                throw new err("Login failed")
+            }
+        },
+
+        submitReview: async ({movieId, rating, review}, context) => {
+            if(){
+                try {
+                    
+                } catch (err) {
+                    throw new err("failed to submit")
+                }
+            }
+        },
+
+        reviews: async ({movieId}) => {
+            try {
+                
+            } catch (err) {
+                throw new err("failed to fetch reviews")
+            }
+        },
+
+        deleteReview: async ({userId}, context) => {
+            if(){
+                try {
+                    
+                } catch (err) {
+                    throw new err("failed to delete user")
+                }
+            }
+        }
+
 
     };
 
