@@ -93,13 +93,14 @@ const Schema = buildSchema(`
         },
 
         submitReview: async ({movieId, rating, review}, context) => {
-            if(){
+            if(!context.user) throw new err("unauthorized")
+                {
                 try {
                     
                 } catch (err) {
                     throw new err("failed to submit")
                 }
-            }
+            };
         },
 
         reviews: async ({movieId}) => {
@@ -111,13 +112,14 @@ const Schema = buildSchema(`
         },
 
         deleteReview: async ({userId}, context) => {
-            if(){
+            if(!context.user || !context.user.isAdmin) throw new err("unauthorized")
+                {
                 try {
                     
                 } catch (err) {
                     throw new err("failed to delete user")
                 }
-            }
+            };
         }
 
 
