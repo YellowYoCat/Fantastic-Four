@@ -9,6 +9,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { saveUser, findUserByEmail, saveReview, getReviewsByMovie, deleteReview, deleteUser } = require('./dal'); 
 const { buildSchema } = require('graphql');
+const { error } = require('console');
 
 const app = express();
 const port = 3000;
@@ -78,7 +79,10 @@ const Schema = buildSchema(`
 
         signup: async ({query}) => {
             try {
-                
+                const hashedPassword = await bcrypt.hash(password, 10);
+                const user = { email, password: hashedPassword};
+                await saveUser(user);
+                return 'User resistered successfully';
             } catch (err) {
                 throw new err("failed to register user")
             }
@@ -86,44 +90,61 @@ const Schema = buildSchema(`
 
         login: async ({email, password}) => {
             try {
-                
+                const user = await findUserByEmail(email);
+                if(!user) throw new Error("user not found");
+                const validPassword = await bcrypt.compare(password, user.password);
+                if(!validPassword) throw new Error("invailed credntails");
+                const token = jwt.sign({ userId: user._id, email: user.email}, secretKey, 
+                {expiresIn: '1hr'});
+                return token
             } catch (err) {
                 throw new err("Login failed")
             }
         },
 
         submitReview: async ({movieId, rating, review}, context) => {
-            if(!context.user) throw new err("unauthorized")
-                {
+            if(!context.user) throw new err("unauthorized");
                 try {
-                    
+                    await saveReview({movieId, userId: context.user.userId, rating, review});
+                    return "Review submitted successfully";
                 } catch (err) {
                     throw new err("failed to submit")
                 }
-            };
-        },
+            },
 
-        reviews: async ({movieId}) => {
-            try {
-                
-            } catch (err) {
-                throw new err("failed to fetch reviews")
-            }
-        },
-
-        deleteReview: async ({userId}, context) => {
-            if(!context.user || !context.user.isAdmin) throw new err("unauthorized")
-                {
+            reviews: async ({ movieId }) => {
                 try {
-                    
-                } catch (err) {
-                    throw new err("failed to delete user")
+                  return await getReviewsByMovie(movieId);
+                } catch (error) {
+                  throw new Error("Failed to fetch reviews");
                 }
-            };
-        }
+              },
+            
+              deleteReview: async ({ reviewId }, context) => {
+                if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
+                try {
+                  await deleteReview(reviewId);
+                  return "Review deleted successfully";
+                } catch (error) {
+                  throw new Error("Failed to delete review");
+                }
+              },
+            
+              deleteUser: async ({ userId }, context) => {
+                if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
+                try {
+                  await deleteUser(userId);
+                  return "User deleted successfully";
+                } catch (error) {
+                  throw new Error("Failed to delete user");
+                }
+              }
 
 
-    };
+
+        };
+    
+
 
     const authenticateToken = (req, res, next) =>{
         const token = req.header('Authorization');
