@@ -56,12 +56,13 @@ const schema = buildSchema(`
   }
 `);
 
+
 const root = {
   movie: async ({ id }) => {
     try {
       const res = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`);
       return res.data;
-    } catch (err) {
+    } catch (error) {
       throw new Error("Failed to fetch movie details");
     }
   },
@@ -70,7 +71,7 @@ const root = {
     try {
       const res = await axios.get(`https://api.themoviedb.org/3/search/movie`, { params: { api_key: apiKey, query } });
       return res.data.results;
-    } catch (err) {
+    } catch (error) {
       throw new Error("Failed to fetch movies");
     }
   },
@@ -81,7 +82,7 @@ const root = {
       const user = { email, password: hashedPassword };
       await saveUser(user);
       return 'User registered successfully';
-    } catch (err) {
+    } catch (error) {
       throw new Error("Failed to register user");
     }
   },
@@ -94,7 +95,7 @@ const root = {
       if (!validPassword) throw new Error("Invalid credentials");
       const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
       return token;
-    } catch (err) {
+    } catch (error) {
       throw new Error("Login failed");
     }
   },
@@ -104,7 +105,7 @@ const root = {
     try {
       await saveReview({ movieId, userId: context.user.userId, rating, review });
       return "Review submitted successfully";
-    } catch (err) {
+    } catch (error) {
       throw new Error("Failed to submit review");
     }
   },
@@ -112,7 +113,7 @@ const root = {
   reviews: async ({ movieId }) => {
     try {
       return await getReviewsByMovie(movieId);
-    } catch (err) {
+    } catch (error) {
       throw new Error("Failed to fetch reviews");
     }
   },
@@ -122,7 +123,7 @@ const root = {
     try {
       await deleteReview(reviewId);
       return "Review deleted successfully";
-    } catch (err) {
+    } catch (error) {
       throw new Error("Failed to delete review");
     }
   },
@@ -132,7 +133,7 @@ const root = {
     try {
       await deleteUser(userId);
       return "User deleted successfully";
-    } catch (err) {
+    } catch (error) {
       throw new Error("Failed to delete user");
     }
   }
@@ -155,10 +156,6 @@ app.use('/graphql', authenticateToken, graphqlHTTP((req) => ({
   context: { user: req.user },
   graphiql: true
 })));
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
 
 //#region
 //old code
