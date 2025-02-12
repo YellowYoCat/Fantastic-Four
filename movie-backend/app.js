@@ -167,6 +167,7 @@ const Schema = buildSchema(`
 
 
 //#region
+//old code
 // // Authentication middleware
 // const authenticateToken = (req, res, next) => {
 //     const token = req.header('Authorization');
