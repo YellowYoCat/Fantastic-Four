@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("Users", userSchema);
 
 //GraphQL Type Definitions
-const typeData = gql`
+const typeDefs = gql`
      type User {
         id: ID!
         email: String!
@@ -30,8 +30,8 @@ const typeData = gql`
     type Mutation {
         createUser(email: String!, password: String!): User
     }
-
 `;
+
 
 //resolvers
 const resolvers = {
