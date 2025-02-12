@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const { saveUser, findUserByEmail, saveReview, getReviewsByMovie, deleteReview, deleteUser } = require('./dal'); 
 const { buildSchema } = require('graphql');
 const { error } = require('console');
+const { graphqlHTTP } = require('express-graphql');
 
 const app = express();
 const port = 3000;
@@ -19,7 +20,7 @@ const secretKey = 'your_secret_key'; // Change this to a secure key
 app.use(cors({ origin: '*' }));
 app.use(bodyParser.json());
 
-const Schema = buildSchema(`
+const schema = buildSchema(`
     type Movie {
     id: ID!
     title: String!
