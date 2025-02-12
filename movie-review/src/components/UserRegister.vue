@@ -48,6 +48,17 @@
 </template>
 
 <script>
+
+
+import { gql } from 'graphql-tag'; // Import gql for GraphQL queries/mutations
+import { ApolloClient, InMemoryCache } from '@apollo/client/core'; // Import Apollo Client
+
+// Initialize Apollo Client
+const client = new ApolloClient({
+  uri: 'http://localhost:3000/graphql', // Your GraphQL endpoint
+  cache: new InMemoryCache(),
+});
+
 export default {
   data() {
     return {
@@ -55,7 +66,7 @@ export default {
       username: "",
       password: "",
       confirmPassword: "",
-      showConfirm: false, // Flag to show the email confirmation modal
+      showConfirm: false, 
       errorMessage: "",
     };
   },
@@ -64,38 +75,95 @@ export default {
       // Check if passwords match
       if (this.password !== this.confirmPassword) {
         this.errorMessage = "Passwords do not match.";
-        return; // Stop submission
+        return; 
       }
 
-      this.errorMessage = ""; // Clear any previous error messages
-      this.showConfirm = true; // Show the email confirmation modal
+      this.errorMessage = ""; // Clear previous error messages
+      this.showConfirm = true; // email confirmation 
     },
-    confirmEmail(isConfirmed) {
+    async confirmEmail(isConfirmed) {
       if (isConfirmed) {
-        const user = {
-          email: this.email,
-          username: this.username,
-          password: this.password,
-        };
-        fetch("http://localhost:3000/api/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(user),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            alert(data.message);
-            this.showConfirm = false;
-          })
-          .catch((error) => console.error(error));
+        try {
+          // Define the GraphQL mutation for user registration
+          const SIGNUP_MUTATION = gql`
+            mutation Signup($email: String!, $password: String!) {
+              signup(email: $email, password: $password)
+            }
+          `;
+
+          // Execute the mutation
+          const { data } = await client.mutate({
+            mutation: SIGNUP_MUTATION,
+            variables: {
+              email: this.email,
+              password: this.password,
+            },
+          });
+
+          alert("User registered successfully!");
+          this.showConfirm = false; 
+        } catch (error) {
+          console.error("Error during registration:", error.message);
+          this.errorMessage = "Failed to register user.";
+        }
       } else {
-        this.showConfirm = false; // Close the modal if the user clicks "No"
+        this.showConfirm = false; 
       }
     },
   },
 };
+
+//#region
+//old code
+// export default {
+//   data() {
+//     return {
+//       email: "",
+//       username: "",
+//       password: "",
+//       confirmPassword: "",
+//       showConfirm: false, // Flag to show the email confirmation modal
+//       errorMessage: "",
+//     };
+//   },
+//   methods: {
+//     handleSubmit() {
+//       // Check if passwords match
+//       if (this.password !== this.confirmPassword) {
+//         this.errorMessage = "Passwords do not match.";
+//         return; // Stop submission
+//       }
+
+//       this.errorMessage = ""; // Clear any previous error messages
+//       this.showConfirm = true; // Show the email confirmation modal
+//     },
+//     confirmEmail(isConfirmed) {
+//       if (isConfirmed) {
+//         const user = {
+//           email: this.email,
+//           username: this.username,
+//           password: this.password,
+//         };
+//         fetch("http://localhost:3000/api/signup", {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify(user),
+//         })
+//           .then((response) => response.json())
+//           .then((data) => {
+//             alert(data.message);
+//             this.showConfirm = false;
+//           })
+//           .catch((error) => console.error(error));
+//       } else {
+//         this.showConfirm = false; // Close the modal if the user clicks "No"
+//       }
+//     },
+//   },
+// };
+//#endregion
 </script>
 
 <style>
