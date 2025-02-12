@@ -9,7 +9,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { saveUser, findUserByEmail, saveReview, getReviewsByMovie, deleteReview, deleteUser } = require('./dal'); 
 const { buildSchema } = require('graphql');
-const { error } = require('console');
 const { graphqlHTTP } = require('express-graphql');
 
 const app = express();
@@ -21,7 +20,7 @@ app.use(cors({ origin: '*' }));
 app.use(bodyParser.json());
 
 const schema = buildSchema(`
-    type Movie {
+  type Movie {
     id: ID!
     title: String!
     overview: String!
@@ -55,117 +54,111 @@ const schema = buildSchema(`
     deleteReview(reviewId: ID!): String
     deleteUser(userId: ID!): String
   }
-    `);
+`);
 
+const root = {
+  movie: async ({ id }) => {
+    try {
+      const res = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`);
+      return res.data;
+    } catch (err) {
+      throw new Error("Failed to fetch movie details");
+    }
+  },
 
-    const root = {
-        movie: async ({ id }) => {
-            try{
-                const res = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`);
-                return res.data;
+  searchMovies: async ({ query }) => {
+    try {
+      const res = await axios.get(`https://api.themoviedb.org/3/search/movie`, { params: { api_key: apiKey, query } });
+      return res.data.results;
+    } catch (err) {
+      throw new Error("Failed to fetch movies");
+    }
+  },
 
-            } catch(err){
-                throw new err("failed to fetch movie details")
-            }
-        },
+  signup: async ({ email, password }) => {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = { email, password: hashedPassword };
+      await saveUser(user);
+      return 'User registered successfully';
+    } catch (err) {
+      throw new Error("Failed to register user");
+    }
+  },
 
-        searchMovies: async ({query}) => {
-            try {
-                const res = await axios.get(`https://api.themoviedb.org/3/search/movie`, { params: { api_key: apiKey, query } });
-                return res.data.results
-            } catch (err) {
-                throw new err('failed to fetch movies')
-            }
-        },
+  login: async ({ email, password }) => {
+    try {
+      const user = await findUserByEmail(email);
+      if (!user) throw new Error("User not found");
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) throw new Error("Invalid credentials");
+      const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+      return token;
+    } catch (err) {
+      throw new Error("Login failed");
+    }
+  },
 
-        signup: async ({query}) => {
-            try {
-                const hashedPassword = await bcrypt.hash(password, 10);
-                const user = { email, password: hashedPassword};
-                await saveUser(user);
-                return 'User resistered successfully';
-            } catch (err) {
-                throw new err("failed to register user")
-            }
-        },
+  submitReview: async ({ movieId, rating, review }, context) => {
+    if (!context.user) throw new Error("Unauthorized");
+    try {
+      await saveReview({ movieId, userId: context.user.userId, rating, review });
+      return "Review submitted successfully";
+    } catch (err) {
+      throw new Error("Failed to submit review");
+    }
+  },
 
-        login: async ({email, password}) => {
-            try {
-                const user = await findUserByEmail(email);
-                if(!user) throw new Error("user not found");
-                const validPassword = await bcrypt.compare(password, user.password);
-                if(!validPassword) throw new Error("invailed credntails");
-                const token = jwt.sign({ userId: user._id, email: user.email}, secretKey, 
-                {expiresIn: '1hr'});
-                return token
-            } catch (err) {
-                throw new err("Login failed")
-            }
-        },
+  reviews: async ({ movieId }) => {
+    try {
+      return await getReviewsByMovie(movieId);
+    } catch (err) {
+      throw new Error("Failed to fetch reviews");
+    }
+  },
 
-        submitReview: async ({movieId, rating, review}, context) => {
-            if(!context.user) throw new err("unauthorized");
-                try {
-                    await saveReview({movieId, userId: context.user.userId, rating, review});
-                    return "Review submitted successfully";
-                } catch (err) {
-                    throw new err("failed to submit")
-                }
-            },
+  deleteReview: async ({ reviewId }, context) => {
+    if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
+    try {
+      await deleteReview(reviewId);
+      return "Review deleted successfully";
+    } catch (err) {
+      throw new Error("Failed to delete review");
+    }
+  },
 
-            reviews: async ({ movieId }) => {
-                try {
-                  return await getReviewsByMovie(movieId);
-                } catch (error) {
-                  throw new Error("Failed to fetch reviews");
-                }
-              },
-            
-              deleteReview: async ({ reviewId }, context) => {
-                if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
-                try {
-                  await deleteReview(reviewId);
-                  return "Review deleted successfully";
-                } catch (error) {
-                  throw new Error("Failed to delete review");
-                }
-              },
-            
-              deleteUser: async ({ userId }, context) => {
-                if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
-                try {
-                  await deleteUser(userId);
-                  return "User deleted successfully";
-                } catch (error) {
-                  throw new Error("Failed to delete user");
-                }
-              }
+  deleteUser: async ({ userId }, context) => {
+    if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
+    try {
+      await deleteUser(userId);
+      return "User deleted successfully";
+    } catch (err) {
+      throw new Error("Failed to delete user");
+    }
+  }
+};
 
+const authenticateToken = (req, res, next) => {
+  const token = req.header('Authorization');
+  if (!token) return next();
 
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return next();
+    req.user = user;
+    next();
+  });
+};
 
-        };
-    
+app.use('/graphql', authenticateToken, graphqlHTTP((req) => ({
+  schema: schema,
+  rootValue: root,
+  context: { user: req.user },
+  graphiql: true
+})));
 
-
-    const authenticateToken = (req, res, next) =>{
-        const token = req.header('Authorization');
-        if (!token) return next();
-
-        jwt.verify(token.secretKey, (err,user) => {
-            if (err) return next();
-            req.user = user;
-            next();
-
-        });
-    };
-
-    app.use('/graphql', authenticateToken, graphqlHTTP({
-        schema: schema,
-        rootValue: root,
-        context: ({ req }) => ({ user: req.user }),
-        graphiql: true
-      }));
-
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
 //#region
 //old code
@@ -306,5 +299,4 @@ const schema = buildSchema(`
 // });
 //#endregion
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
 

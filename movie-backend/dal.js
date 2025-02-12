@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
-const {ApolloServer, gql} = require('apollo-server');
+const { ApolloServer, gql } = require('apollo-server');
+const bcrypt = require('bcrypt');
+require('dotenv').config(); // To load environment variables from a .env file
 
 // MongoDB Connection
-const DB_URI = "mongodb+srv://mmitchell:Tuff12top@cluster0.fm4mkz2.mongodb.net/MovieReview";
+const DB_URI = process.env.DB_URI;
 mongoose.connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB connection error:", err));
@@ -15,9 +17,9 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("Users", userSchema);
 
-//GraphQL Type Definitions
+// GraphQL Type Definitions
 const typeDefs = gql`
-     type User {
+    type User {
         id: ID!
         email: String!
         password: String!
@@ -32,8 +34,7 @@ const typeDefs = gql`
     }
 `;
 
-
-//resolvers
+// Resolvers
 const resolvers = {
     Query: {
         user: async (_, { email }) => {
@@ -49,7 +50,9 @@ const resolvers = {
     Mutation: {
         createUser: async (_, { email, password }) => {
             try {
-                const user = new User({ email, password });
+                // Hash password before saving
+                const hashedPassword = await bcrypt.hash(password, 10);
+                const user = new User({ email, password: hashedPassword });
                 await user.save();
                 console.log("User saved successfully:", user);
                 return user;
@@ -68,6 +71,7 @@ const server = new ApolloServer({ typeDefs, resolvers });
 server.listen().then(({ url }) => {
     console.log(`🚀 Server ready at ${url}`);
 });
+ 
 
 //#region
 //old code
