@@ -25,16 +25,10 @@
 </template>
 
 <script>
+import { request, gql } from 'graphql-request'; // Import graphql-request
 
-//switch to GraphQl
-import { gql } from 'graphql-tag'; // Import gql for GraphQL queries/mutations
-import { ApolloClient, InMemoryCache } from '@apollo/client/core'; // Import Apollo Client
-
-// Initialize Apollo Client
-const client = new ApolloClient({
-  uri: 'http://localhost:3000/graphql', // Your GraphQL endpoint
-  cache: new InMemoryCache(),
-});
+// GraphQL endpoint
+const GRAPHQL_ENDPOINT = 'http://localhost:3000/graphql';
 
 export default {
   name: 'LoginView',
@@ -60,13 +54,10 @@ export default {
           }
         `;
 
-        // Execute the mutation
-        const { data } = await client.mutate({
-          mutation: LOGIN_MUTATION,
-          variables: {
-            email: this.email,
-            password: this.password,
-          },
+        // Execute the mutation using graphql-request
+        const data = await request(GRAPHQL_ENDPOINT, LOGIN_MUTATION, {
+          email: this.email,
+          password: this.password,
         });
 
         // Store the JWT token in localStorage
@@ -77,12 +68,11 @@ export default {
         // Optionally redirect the user after successful login
         this.$router.push("/dashboard"); // Assuming you use Vue Router for navigation
       } catch (error) {
-        this.errorMessage = error.message;
+        this.errorMessage = error.response?.errors[0]?.message || "Login failed. Please try again.";
       }
     }
   }
 };
-
 
 
 

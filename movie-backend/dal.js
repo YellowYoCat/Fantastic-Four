@@ -1,18 +1,14 @@
 const mongoose = require('mongoose');
-const { ApolloServer, gql } = require('apollo-server');
+const express = require('express');
+const { graphqlHTTP } = require('express-graphql');
+const { buildSchema } = require('graphql');
 const bcrypt = require('bcrypt');
-// require('dotenv').config(); // To load environment variables from a .env file
 
 // MongoDB Connection
 const DB_URI = "mongodb+srv://mmitchell:Tuff12top@cluster0.fm4mkz2.mongodb.net/MovieReview";
 mongoose.connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB connection error:", err));
-
-// const DB_URI = process.env.DB_URI;
-// mongoose.connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-//     .then(() => console.log("Connected to MongoDB"))
-//     .catch((err) => console.error("MongoDB connection error:", err));
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -22,8 +18,8 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("Users", userSchema);
 
-// GraphQL Type Definitions
-const typeDefs = gql`
+// GraphQL Schema
+const schema = buildSchema(`
     type User {
         id: ID!
         email: String!
@@ -37,79 +33,83 @@ const typeDefs = gql`
     type Mutation {
         createUser(email: String!, password: String!): User
     }
-`;
+`);
 
-// Resolvers
-const resolvers = {
-    Query: {
-        user: async (_, { email }) => {
-            try {
-                const user = await User.findOne({ email }).exec();
-                if (!user) {
-                    throw new Error('User not found');
-                }
-                return user;
-            } catch (error) {
-                console.error("Error finding user by email:", error.message);
-                throw new Error('Error finding user');
+// Root Resolver
+const root = {
+    user: async ({ email }) => {
+        try {
+            const user = await User.findOne({ email }).exec();
+            if (!user) {
+                throw new Error('User not found');
             }
-        },
+            return user;
+        } catch (error) {
+            console.error("Error finding user by email:", error.message);
+            throw new Error('Error finding user');
+        }
     },
-    Mutation: {
-        createUser: async (_, { email, password }) => {
-            try {
-                const existingUser = await User.findOne({ email }).exec();
-                if (existingUser) {
-                    throw new Error('User already exists');
-                }
-                const user = new User({ email, password });
-                await user.save();
-                console.log("User saved successfully:", user);
-                return user;
-            } catch (error) {
-                console.error("Error saving user:", error.message);
-                throw new Error('Error creating user');
+    createUser: async ({ email, password }) => {
+        try {
+            const existingUser = await User.findOne({ email }).exec();
+            if (existingUser) {
+                throw new Error('User already exists');
             }
-        },
+            const user = new User({ email, password });
+            await user.save();
+            console.log("User saved successfully:", user);
+            return user;
+        } catch (error) {
+            console.error("Error saving user:", error.message);
+            throw new Error('Error creating user');
+        }
     },
 };
 
-// Apollo Server Setup
-const server = new ApolloServer({ typeDefs, resolvers });
+// Express App Setup
+const app = express();
+
+// GraphQL Middleware
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true, // Enable GraphiQL for testing
+}));
 
 // Start the server
-server.listen().then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`);
+const PORT = 4000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);
 });
- 
 
-//#region
-//old code
-// Save User Function
-// async function saveUser(userData) {
-//     try {
-//         const user = new User(userData);
-//         await user.save();
-//         console.log("User saved successfully:", user);
-//     } catch (error) {
-//         console.error("Error saving user:", error.message);
-//     }
-// }
 
-// // Find User by Email
-// async function findUserByEmail(email) {
-//     try {
-//         const user = await User.findOne({ email }).exec(); 
-//         return user;
-//     } catch (error) {
-//         console.error("Error finding user by email:", error.message);
-//         throw error; // Propagate the error
-//     }
-// }
+// //#region
+// //old code
+// // Save User Function
+// // async function saveUser(userData) {
+// //     try {
+// //         const user = new User(userData);
+// //         await user.save();
+// //         console.log("User saved successfully:", user);
+// //     } catch (error) {
+// //         console.error("Error saving user:", error.message);
+// //     }
+// // }
 
-// // Export functions
-// module.exports = {
-//     saveUser,
-//     findUserByEmail,
-// };
-//#endregion
+// // // Find User by Email
+// // async function findUserByEmail(email) {
+// //     try {
+// //         const user = await User.findOne({ email }).exec(); 
+// //         return user;
+// //     } catch (error) {
+// //         console.error("Error finding user by email:", error.message);
+// //         throw error; // Propagate the error
+// //     }
+// // }
+
+// // // Export functions
+// // module.exports = {
+// //     saveUser,
+// //     findUserByEmail,
+// // };
+// //#endregion
