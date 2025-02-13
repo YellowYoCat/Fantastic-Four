@@ -54,6 +54,24 @@ const schema = buildSchema(`
   }
 `);
 
+//search movies
+app.get('/api/movies/search', async (req, res) => {
+  const query = req.query.query;
+  if (!query) {
+      return res.status(400).json({ error: "Query parameter is required" });
+  }
+
+  try {
+      const response = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
+          params: { api_key: apiKey, query },
+      });
+      res.json(response.data.results);
+  } catch (error) {
+      console.error("Error fetching movies:", error.message);
+      res.status(500).json({ error: "Failed to fetch movies" });
+  }
+});
+
 // Root Resolver
 const root = {
   movie: async ({ id }) => {
