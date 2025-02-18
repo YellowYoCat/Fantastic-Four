@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="container">
-      <!-- Sidebar -->
+      
       <aside class="sidebar">
         <div class="search">
           <input type="text" v-model="searchQuery" placeholder="Enter Movie Title Here" @input="filterMovies" />
@@ -23,14 +23,13 @@
           </ul>
         </div>
       </aside>
-      <!-- Movie Grid -->
+     
       <main class="movie-grid">
         <div class="movie-card" v-for="movie in filteredMovies" :key="movie.id">
-          <a :href="'#/movie/' + movie.id" class="movie-button">
-            <button class="movie-button">
-              <img :src="movie.image" :alt="movie.title" class="movie-image" />
-            </button>
+          <a :href="'#/singlemovie'" class="movie-button">   <!--+ movie.id-->
+            <img :src="movie.image" :alt="movie.title" class="movie-image" />
           </a>
+
           <h4 class="luckiest-guy-regular">{{ movie.title }}</h4>
 
         </div>

@@ -26,6 +26,10 @@ export default {
         this.movieId = id; // Set the movie id
         return SingleMovie;
       }
+
+      // <a href="#/about">About</a>
+      // <a href="#/reviewform">Review Form</a>
+      // <a href="#/singlemovie">Single Movie</a>  
       
       // Return the appropriate component for static routes
       const routes = {
@@ -35,6 +39,7 @@ export default {
         '/register': Register,
         '/movie': AllMovie,
         '/reviewform': ReviewForm,
+        '/singlemovie': SingleMovie,
       };
       return routes[this.currentRoute] || Home;
     },
