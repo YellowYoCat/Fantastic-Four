@@ -34,7 +34,7 @@
       <button class="loginbtn" type="submit">Register</button>
     </form>
 
-    <!-- Modal for email confirmation -->
+    
     <div v-if="showConfirm" class="modal" @click.self="showConfirm = false">
       <div class="modal-content">
         <p>Is this your email: {{ email }}?</p>
@@ -43,19 +43,15 @@
       </div>
     </div>
 
-    <!-- Error Message -->
+   
     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
   </div>
 </template>
 
 <script>
-import { gql } from 'graphql-tag'; 
-import { ApolloClient, InMemoryCache } from '@apollo/client/core';
+import { request, gql } from 'graphql-request';
 
-const client = new ApolloClient({
-  uri: 'http://localhost:3000/graphql',
-  cache: new InMemoryCache(),
-});
+const GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql';
 
 export default {
   data() {
@@ -72,28 +68,44 @@ export default {
     handleSubmit() {
       if (this.password !== this.confirmPassword) {
         this.errorMessage = "Passwords do not match.";
-        return; 
+        return;
       }
-      this.errorMessage = ""; 
-      this.showConfirm = true; 
+
+      // Val email
+      const emailRegex = /^[a-zA-Z0-9_%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(this.email)) {
+        this.errorMessage = "Invalid email format.";
+        return;
+      }
+
+      // Val password 
+      if (this.password.length < 8) {
+        this.errorMessage = "Password must be at least 8 characters long.";
+        return;
+      }
+
+      this.errorMessage = "";
+      this.showConfirm = true;
     },
     async confirmEmail(isConfirmed) {
       if (isConfirmed) {
         try {
+          
           const SIGNUP_MUTATION = gql`
-            mutation Signup($email: String!, $username: String!, $password: String!) {
-              signup(email: $email, username: $username, password: $password)
+            mutation Signup($user: UserSignup!) {
+              signup(user: $user)
             }
           `;
 
-          const { data } = await client.mutate({
-            mutation: SIGNUP_MUTATION,
-            variables: {
+          const variables = {
+            user: {
               email: this.email,
-              username: this.username,
               password: this.password,
             },
-          });
+          };
+
+          
+          const data = await request(GRAPHQL_ENDPOINT, SIGNUP_MUTATION, variables);
 
           if (data.signup) {
             alert("User registered successfully!");
@@ -105,7 +117,16 @@ export default {
           this.showConfirm = false;
         } catch (error) {
           console.error("Error during registration:", error);
-          this.errorMessage = error.message || "Failed to register user.";
+
+          
+          if (error.response && error.response.errors && error.response.errors.length > 0) {
+            this.errorMessage = error.response.errors[0].message;
+          } else if (error.message) {
+            
+            this.errorMessage = error.message;
+          } else {
+            this.errorMessage = "Failed to register user. Please try again.";
+          }
         }
       } else {
         this.showConfirm = false;
@@ -120,7 +141,7 @@ export default {
   mounted() {
     window.addEventListener("keydown", this.handleEsc);
   },
-  beforeUnmount() { 
+  beforeUnmount() {
     window.removeEventListener("keydown", this.handleEsc);
   }
 };
@@ -158,83 +179,4 @@ export default {
 }
 </style>
 
-<!-- //#region
-//old code
-// export default {
-//   data() {
-//     return {
-//       email: "",
-//       username: "",
-//       password: "",
-//       confirmPassword: "",
-//       showConfirm: false, // Flag to show the email confirmation modal
-//       errorMessage: "",
-//     };
-//   },
-//   methods: {
-//     handleSubmit() {
-//       // Check if passwords match
-//       if (this.password !== this.confirmPassword) {
-//         this.errorMessage = "Passwords do not match.";
-//         return; // Stop submission
-//       }
 
-//       this.errorMessage = ""; // Clear any previous error messages
-//       this.showConfirm = true; // Show the email confirmation modal
-//     },
-//     confirmEmail(isConfirmed) {
-//       if (isConfirmed) {
-//         const user = {
-//           email: this.email,
-//           username: this.username,
-//           password: this.password,
-//         };
-//         fetch("http://localhost:3000/api/signup", {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify(user),
-//         })
-//           .then((response) => response.json())
-//           .then((data) => {
-//             alert(data.message);
-//             this.showConfirm = false;
-//           })
-//           .catch((error) => console.error(error));
-//       } else {
-//         this.showConfirm = false; // Close the modal if the user clicks "No"
-//       }
-//     },
-//   },
-// };
-//#endregion
-</script>
-
-<style>
-/* Style for the modal */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: #8DBAD7;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  max-width: 360px;
-  width: 100%;
-}
-
-.card{
-  height: 380px;
-}
-</style> -->

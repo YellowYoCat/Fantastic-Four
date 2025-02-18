@@ -49,10 +49,7 @@ export default {
 <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&family=Jolly+Lodger&family=Luckiest+Guy&display=swap" rel="stylesheet">
   <div id="app">
     <nav class="nav">
-<!--       
-      <a href="#/about">About</a>
-      <a href="#/reviewform">Review Form</a>
-      <a href="#/singlemovie">Single Movie</a>  -->
+
 
 
       <img src="@/assets/logo.png" alt="Logo" class="logoPic">
@@ -65,4 +62,5 @@ export default {
     <component :is="CurrentComponent" />
   </div>
 </template>
+
 

@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import { request, gql } from 'graphql-request'; // Import graphql-request
+import { request, gql } from 'graphql-request'; 
 
 // GraphQL endpoint
-const GRAPHQL_ENDPOINT = 'http://localhost:3000/graphql';
+const GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql'; 
 
 export default {
   name: 'LoginView',
@@ -36,7 +36,7 @@ export default {
     return {
       email: "",
       password: "",
-      errorMessage: "" // To show error messages
+      errorMessage: "" 
     };
   },
   methods: {
@@ -47,39 +47,44 @@ export default {
       }
 
       try {
-        // Define the GraphQL mutation for login
+        
         const LOGIN_MUTATION = gql`
           mutation Login($email: String!, $password: String!) {
             login(email: $email, password: $password)
           }
         `;
 
-        // Execute the mutation using graphql-request
+        
         const data = await request(GRAPHQL_ENDPOINT, LOGIN_MUTATION, {
           email: this.email,
           password: this.password,
         });
 
-        // Store the JWT token in localStorage
+       
         localStorage.setItem('token', data.login);
 
         alert("Login successful!");
 
-        // Optionally redirect the user after successful login
-        this.$router.push("/dashboard"); // Assuming you use Vue Router for navigation
+       
+        this.$router.push("/dashboard"); 
       } catch (error) {
-        this.errorMessage = error.response?.errors[0]?.message || "Login failed. Please try again.";
+        console.error("Login error:", error);
+
+       
+        if (error.response && error.response.errors && error.response.errors.length > 0) {
+          this.errorMessage = error.response.errors[0].message;
+        } else if (error.message) {
+          
+          this.errorMessage = error.message;
+        } else {
+          this.errorMessage = "Login failed. Please try again.";
+        }
       }
     }
   }
 };
 
 
-
-
-
-
-//#region
 //old code
 // export default {
 //   name: 'LoginView',
