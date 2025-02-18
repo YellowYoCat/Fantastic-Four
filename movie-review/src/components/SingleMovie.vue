@@ -10,7 +10,7 @@
       <h5 class="over">Duration: {{ formatRuntime(movie.runtime) }}</h5>
       <h5 class="over">Ratings: {{ movie.vote_average }} / 10</h5>
       <p class="over">Summary: {{ movie.overview }}</p>
-      <br>
+      <br />
       <router-link :to="'/reviewform/' + movie.id">
         <button class="formbtn">Review Movie</button>
       </router-link>
@@ -24,14 +24,24 @@ import axios from 'axios';
 
 export default {
   name: 'SingleMovie',
+  props: {
+    movieId: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      movie: null
+      movie: null,
     };
   },
+  watch: {
+    movieId(newId) {
+      this.fetchMovieDetails(newId); // Fetch new movie details when the prop changes
+    },
+  },
   methods: {
-    async fetchMovieDetails() {
-      const movieId = this.$route.params.id; // Get ID from URL
+    async fetchMovieDetails(movieId) {
       try {
         const response = await axios.get(`http://localhost:3000/api/movie/${movieId}`);
         this.movie = response.data;
@@ -50,13 +60,14 @@ export default {
       const hours = Math.floor(minutes / 60);
       const mins = minutes % 60;
       return `${hours}h ${mins}m`;
-    }
+    },
   },
   created() {
-    this.fetchMovieDetails();
-  }
+    this.fetchMovieDetails(this.movieId); // Fetch movie details when the component is created
+  },
 };
 </script>
+
 
 <style scoped>
 .movie-container {

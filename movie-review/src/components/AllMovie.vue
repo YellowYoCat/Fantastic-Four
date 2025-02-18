@@ -10,24 +10,14 @@
           <h3>Genre</h3>
           <ul>
             <li v-for="genre in genres" :key="genre">
-              <input
-                type="checkbox"
-                :value="genre"
-                v-model="selectedGenres"
-                @change="filterMovies"
-              />
+              <input type="checkbox" :value="genre" v-model="selectedGenres" @change="filterMovies" />
               {{ genre }}
             </li>
           </ul>
           <h3>Rating</h3>
           <ul>
             <li v-for="rating in ratings" :key="rating">
-              <input
-                type="checkbox"
-                :value="rating"
-                v-model="selectedRatings"
-                @change="filterMovies"
-              />
+              <input type="checkbox" :value="rating" v-model="selectedRatings" @change="filterMovies" />
               {{ rating }}
             </li>
           </ul>
@@ -36,11 +26,11 @@
       <!-- Movie Grid -->
       <main class="movie-grid">
         <div class="movie-card" v-for="movie in filteredMovies" :key="movie.id">
-          <router-link :to="'/movie/' + movie.id" class="movie-button">
-          <button class="movie-button">
-            <img :src="movie.image" :alt="movie.title" class="movie-image " />
-          </button> 
-        </router-link>
+          <a :href="'#/movie/' + movie.id" class="movie-button">
+            <button class="movie-button">
+              <img :src="movie.image" :alt="movie.title" class="movie-image" />
+            </button>
+          </a>
           <h4 class="luckiest-guy-regular">{{ movie.title }}</h4>
 
         </div>
