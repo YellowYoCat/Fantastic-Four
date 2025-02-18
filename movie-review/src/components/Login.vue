@@ -28,7 +28,7 @@
 import { request, gql } from 'graphql-request'; 
 
 // GraphQL endpoint
-const GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql'; 
+const GRAPHQL_ENDPOINT = 'http://localhost:5000/graphql'; 
 
 export default {
   name: 'LoginView',
@@ -66,7 +66,8 @@ export default {
         alert("Login successful!");
 
        
-        this.$router.push("/dashboard"); 
+        // this.$router.push("/dashboard"); 
+        window.location.hash = '/dashboard';
       } catch (error) {
         console.error("Login error:", error);
 

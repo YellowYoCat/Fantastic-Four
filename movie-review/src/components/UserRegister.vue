@@ -51,7 +51,7 @@
 <script>
 import { request, gql } from 'graphql-request';
 
-const GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql';
+const GRAPHQL_ENDPOINT = 'http://localhost:5000/graphql';
 
 export default {
   data() {
@@ -109,7 +109,9 @@ export default {
 
           if (data.signup) {
             alert("User registered successfully!");
-            this.$router.push("/login");
+            //this.$router.push("/login");
+        window.location.hash = '/login';
+            
           } else {
             this.errorMessage = "Registration failed. Please try again.";
           }
