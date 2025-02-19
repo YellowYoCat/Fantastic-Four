@@ -74,13 +74,17 @@ const resolvers = {
     },
     searchMovies: async (_, { query }) => {
       try {
+        console.log(`Searching movies with query: ${query}`);
         const res = await axios.get(`https://api.themoviedb.org/3/search/movie`, { params: { api_key: apiKey, query } });
+        console.log("Search API Response:", res.data);
         return res.data.results;
       } catch (error) {
         console.error("Failed to fetch movies:", error.message);
         throw new Error("Failed to fetch movies");
       }
     },
+
+
     reviews: async (_, { movieId }) => {
       throw new Error("Not implemented");
     }
