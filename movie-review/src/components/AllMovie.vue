@@ -17,13 +17,6 @@
               {{ genre }}
             </li>
           </ul>
-          <h3>Rating</h3>
-          <ul>
-            <li v-for="rating in ratings" :key="rating">
-              <input type="checkbox" :value="rating" v-model="selectedRatings" @change="filterMovies" />
-              {{ rating }}
-            </li>
-          </ul>
         </div>
       </aside>
      
@@ -38,7 +31,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -71,6 +63,7 @@ export default {
           this.movies = response.data.results.map((movie) => ({
             ...movie,
             image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+            genres: movie.genre_ids.map(id => this.getGenreName(id)), // Convert genre IDs to names
           }));
           this.filterMovies();
         })
@@ -101,6 +94,7 @@ export default {
           this.movies = response.data.cast.map((movie) => ({
             ...movie,
             image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+            genres: movie.genre_ids.map(id => this.getGenreName(id)), // Convert genre IDs to names
           }));
           this.filterMovies();
         })
@@ -116,6 +110,7 @@ export default {
           this.movies = response.data.results.map((movie) => ({
             ...movie,
             image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+            genres: movie.genre_ids.map(id => this.getGenreName(id)), // Convert genre IDs to names
           }));
           this.filterMovies();
         })
@@ -126,13 +121,27 @@ export default {
     filterMovies() {
       this.filteredMovies = this.movies.filter((movie) => {
         const matchesGenre =
-          this.selectedGenres.length === 0 || this.selectedGenres.includes(movie.genre);
+          this.selectedGenres.length === 0 ||
+          this.selectedGenres.some(genre => movie.genres.includes(genre)); // Match genre name
+
         const matchesRating =
-          this.selectedRatings.length === 0 || this.selectedRatings.includes(movie.rating);
+          this.selectedRatings.length === 0 ||
+          this.selectedRatings.includes(movie.rating);
 
         return matchesGenre && matchesRating;
       });
-    }
+    },
+
+    getGenreName(id) {
+      const genreMap = {
+        28: "Action",
+        16: "Animation",
+        18: "Drama",
+        35: "Comedy"
+      };
+      return genreMap[id] || "Unknown"; 
+    },
+
   },
   mounted() {
     this.fetchPopularMovies(); // Fetch movies when the component is mounted
