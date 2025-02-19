@@ -4,7 +4,10 @@
       
       <aside class="sidebar">
         <div class="search">
-          <input type="text" v-model="searchQuery" placeholder="Enter Movie Title Here" @input="filterMovies" />
+          <input type="text" v-model="movieSearchQuery" placeholder="Enter Movie Title Here" @input="fetchMovies" />
+        </div>
+        <div class="search">
+          <input type="text" v-model="actorSearchQuery" placeholder="Enter Actor/Actress Here" @input="fetchMoviesByActor" />
         </div>
         <div class="filters">
           <h3>Genre</h3>
@@ -26,7 +29,7 @@
      
       <main class="movie-grid">
         <div class="movie-card" v-for="movie in filteredMovies" :key="movie.id">
-          <a :href="'#/singlemovie'" class="movie-button">   <!--+ movie.id-->
+          <a :href="'#/singlemovie'" class="movie-button">
             <img :src="movie.image" :alt="movie.title" class="movie-image" />
           </a>
           <h4 class="luckiest-guy-regular">{{ movie.title }}</h4>
@@ -36,13 +39,15 @@
   </div>
 </template>
 
+
 <script>
 import axios from 'axios';
 
 export default {
   data() {
     return {
-      searchQuery: "",
+      movieSearchQuery: "",
+      actorSearchQuery: "",
       selectedGenres: [],
       selectedRatings: [],
       movies: [],
@@ -52,55 +57,85 @@ export default {
     };
   },
   methods: {
-    filterMovies() {
-      this.filteredMovies = this.movies.filter((movie) => {
-        const matchesSearch =
-          movie.title.toLowerCase().includes(this.searchQuery.toLowerCase());
-        const matchesGenre =
-          this.selectedGenres.length === 0 ||
-          this.selectedGenres.includes(movie.genre);
-        const matchesRating =
-          this.selectedRatings.length === 0 ||
-          this.selectedRatings.includes(movie.rating);
+    // Fetch movies based on title
+    fetchMovies() {
+      if (!this.movieSearchQuery.trim()) {
+        this.fetchPopularMovies();
+        return;
+      }
 
-        return matchesSearch && matchesGenre && matchesRating;
-      });
+      const apiUrl = `https://api.themoviedb.org/3/search/movie?api_key=320b4a81527cb06be689a396ecc7be50&query=${encodeURIComponent(this.movieSearchQuery)}`;
+
+      axios.get(apiUrl)
+        .then((response) => {
+          this.movies = response.data.results.map((movie) => ({
+            ...movie,
+            image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+          }));
+          this.filterMovies();
+        })
+        .catch((error) => console.error("Error fetching movies:", error));
     },
 
-    // Fetch movies from your backend API or popular movies if no search query is entered
-    fetchMovies() {
-  let apiUrl;
-  if (this.searchQuery.trim()) {
-    // Use TMDB's search endpoint instead of local API
-    apiUrl = `https://api.themoviedb.org/3/search/movie?api_key=320b4a81527cb06be689a396ecc7be50&query=${encodeURIComponent(this.searchQuery)}`;
-  } else {
-    // Default to fetching popular movies
-    apiUrl = 'https://api.themoviedb.org/3/movie/popular?api_key=320b4a81527cb06be689a396ecc7be50';
-  }
+    // Fetch movies based on actor
+    fetchMoviesByActor() {
+      if (!this.actorSearchQuery.trim()) return;
 
-  axios.get(apiUrl)
-    .then((response) => {
-      let moviesData = response.data.results || response.data;
-      this.movies = moviesData.map((movie) => ({
-        ...movie,
-        image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-      }));
-      this.filterMovies();
-    })
-    .catch((error) => {
-      console.error("Error fetching movies:", error);
-    });
-}
+      const apiUrl = `https://api.themoviedb.org/3/search/person?api_key=320b4a81527cb06be689a396ecc7be50&query=${encodeURIComponent(this.actorSearchQuery)}`;
 
-  },
-  watch: {
-    // Automatically call fetchMovies when searchQuery changes
-    searchQuery() {
-      this.fetchMovies(); // Refetch the movies every time the search query is modified
+      axios.get(apiUrl)
+        .then((response) => {
+          if (response.data.results.length === 0) {
+            this.movies = [];
+            return;
+          }
+
+          const actorId = response.data.results[0].id;
+
+          // Fetch movies that the actor is in
+          return axios.get(`https://api.themoviedb.org/3/person/${actorId}/movie_credits?api_key=320b4a81527cb06be689a396ecc7be50`);
+        })
+        .then((response) => {
+          if (!response) return;
+
+          this.movies = response.data.cast.map((movie) => ({
+            ...movie,
+            image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+          }));
+          this.filterMovies();
+        })
+        .catch((error) => console.error("Error fetching actor movies:", error));
+    },
+
+    // Fetch popular movies by default
+    fetchPopularMovies() {
+      const apiUrl = 'https://api.themoviedb.org/3/movie/popular?api_key=320b4a81527cb06be689a396ecc7be50';
+
+      axios.get(apiUrl)
+        .then((response) => {
+          this.movies = response.data.results.map((movie) => ({
+            ...movie,
+            image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+          }));
+          this.filterMovies();
+        })
+        .catch((error) => console.error("Error fetching popular movies:", error));
+    },
+
+    // Apply filters based on genres and ratings
+    filterMovies() {
+      this.filteredMovies = this.movies.filter((movie) => {
+        const matchesGenre =
+          this.selectedGenres.length === 0 || this.selectedGenres.includes(movie.genre);
+        const matchesRating =
+          this.selectedRatings.length === 0 || this.selectedRatings.includes(movie.rating);
+
+        return matchesGenre && matchesRating;
+      });
     }
   },
   mounted() {
-    this.fetchMovies(); // Fetch movies when the component is mounted
+    this.fetchPopularMovies(); // Fetch movies when the component is mounted
   },
 };
 </script>
