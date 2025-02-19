@@ -1,22 +1,26 @@
 <template>
-  <div v-if="movie" class="movie-container">
+  <div>
+    
     <div class="Imgholder">
-      <img :src="getMovieImage(movie.poster_path)" alt="Movie Poster" class="movie-poster" />
+      <img :src="posterUrl" alt="Movie Poster" v-if="posterUrl">
     </div>
+
+    
     <div class="moviereview">
+      <br>
       <h1 class="over">{{ movie.title }}</h1>
-      <h5 class="over">ESRB Rating: {{ movie.vote_average }}</h5>
-      <h5 class="over">Genre: {{ getGenres(movie.genres) }}</h5>
-      <h5 class="over">Duration: {{ formatRuntime(movie.runtime) }}</h5>
-      <h5 class="over">Ratings: {{ movie.vote_average }} / 10</h5>
-      <p class="over">Summary: {{ movie.overview }}</p>
-      <br />
-      <router-link :to="'/reviewform/' + movie.id">
+      <br>
+      <h5 class="over">ESRB rating: {{ movie.adult ? 'R' : 'PG' }}</h5>
+      <h5 class="over">Genre: {{ genres }}</h5>
+      <h5 class="over">Duration: {{ movie.runtime }} minutes</h5>
+      <h5 class="over">Ratings: {{ movie.vote_average }} ({{ movie.vote_count }} votes)</h5>
+      <h5 class="over">Summary: {{ movie.overview }}</h5>
+      <br>
+      <a href="#/reviewform">
         <button class="formbtn">Review Movie</button>
-      </router-link>
+      </a>
     </div>
   </div>
-  <div v-else class="loading">Loading...</div>
 </template>
 
 <script>
@@ -26,48 +30,37 @@ export default {
   name: 'SingleMovie',
   props: {
     movieId: {
-      type: String,
+      type: String, //pass the ID
       required: true,
     },
   },
   data() {
     return {
-      movie: null,
+      movie: {}, //store movie details
+      posterUrl: '', // URL movie poster
+      genres: '', // list of genres
     };
   },
-  watch: {
-    movieId(newId) {
-      this.fetchMovieDetails(newId); // Fetch new movie details when the prop changes
-    },
+  created() {
+    this.fetchMovieData(); // Fetch movie data 
   },
   methods: {
-    async fetchMovieDetails(movieId) {
+    async fetchMovieData() {
+      const apiKey = '320b4a81527cb06be689a396ecc7be50'; // Replace with your TMDB API key
+      const url = `https://api.themoviedb.org/3/movie/${this.movieId}?api_key=${apiKey}&language=en-US`;
+
       try {
-        const response = await axios.get(`http://localhost:5000/api/movie/${movieId}`);
-        this.movie = response.data;
+        const response = await axios.get(url); // Fetch movie data from TMDB API
+        this.movie = response.data; // Store movie data
+        this.posterUrl = `https://image.tmdb.org/t/p/w500${this.movie.poster_path}`; // Set poster URL
+        this.genres = this.movie.genres.map(genre => genre.name).join(', '); // Format genres
       } catch (error) {
-        console.error('Error fetching movie details:', error);
+        console.error('Error fetching movie data:', error); // Handle errors
       }
     },
-    getMovieImage(path) {
-      return path ? `https://image.tmdb.org/t/p/w500${path}` : 'default-movie.jpg';
-    },
-    getGenres(genres) {
-      return genres?.map(genre => genre.name).join(', ') || 'N/A';
-    },
-    formatRuntime(minutes) {
-      if (!minutes) return 'N/A';
-      const hours = Math.floor(minutes / 60);
-      const mins = minutes % 60;
-      return `${hours}h ${mins}m`;
-    },
-  },
-  created() {
-    this.fetchMovieDetails(this.movieId); // Fetch movie details when the component is created
   },
 };
 </script>
-
 
 <style scoped>
 .movie-container {
