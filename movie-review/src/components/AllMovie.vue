@@ -29,9 +29,7 @@
           <a :href="'#/singlemovie'" class="movie-button">   <!--+ movie.id-->
             <img :src="movie.image" :alt="movie.title" class="movie-image" />
           </a>
-
           <h4 class="luckiest-guy-regular">{{ movie.title }}</h4>
-
         </div>
       </main>
     </div>

@@ -286,8 +286,8 @@ ul {
   background-color: #8DBAD7;
   padding: 10px;
   border-radius: 8px;
-  width: fit-content;
-  height: fit-content;
+  width:auto;
+  height:fit-content;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
@@ -303,6 +303,8 @@ ul {
   height: 450px; /* Standard portrait aspect ratio */
   object-fit: cover; /* Ensures the image fills without stretching */
   margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 25px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
