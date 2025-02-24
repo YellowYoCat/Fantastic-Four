@@ -6,6 +6,7 @@ import AllMovie from './components/AllMovie.vue';
 import Register from './components/UserRegister.vue';
 import ReviewForm from './components/ReviewForm.vue';
 import SingleMovie from './components/SingleMovie.vue';
+import Profile from './components/Profile.vue;'
 
 import './css/main.css';
 
@@ -40,6 +41,8 @@ export default {
         '/movie': AllMovie,
         '/reviewform': ReviewForm,
         '/singlemovie': SingleMovie,
+        '/profile': Profile,
+        
       };
       return routes[this.currentRoute] || Home;
     },
