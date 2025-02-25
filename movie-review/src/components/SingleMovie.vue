@@ -1,12 +1,12 @@
 <template>
-  <div>
-    
+  <div class="movie-container">
     <div class="Imgholder">
-      <img :src="posterUrl" alt="Movie Poster" v-if="posterUrl">
+      <img class="poster" :src="posterUrl" alt="Movie Poster" v-if="posterUrl">
     </div>
 
-    
     <div class="moviereview">
+      
+    <div>
       <br>
       <h1 class="over">{{ movie.title }}</h1>
       <br>
@@ -20,6 +20,7 @@
         <button class="formbtn">Review Movie</button>
       </a>
     </div>
+    </div>
   </div>
 </template>
 
@@ -28,26 +29,29 @@ import axios from 'axios';
 
 export default {
   name: 'SingleMovie',
-  props: {
-    movieId: {
-      type: String, //pass the ID
-      required: true,
-    },
-  },
   data() {
     return {
-      movie: {}, //store movie details
-      posterUrl: '', // URL movie poster
-      genres: '', // list of genres
+      movie: {}, // Store movie details
+      posterUrl: '', // Movie poster URL
+      genres: '', // List of genres
     };
   },
   created() {
-    this.fetchMovieData(); // Fetch movie data 
-  },
+  console.log("Route params:", this.$route.params); // Debug route params
+  const movieId = this.$route.params.id;
+
+  if (!movieId) {
+    console.error("Error: Movie ID is undefined");
+    return;
+  }
+
+  this.fetchMovieData(movieId);
+}
+,
   methods: {
-    async fetchMovieData() {
+    async fetchMovieData(movieId) {
       const apiKey = '320b4a81527cb06be689a396ecc7be50'; // Replace with your TMDB API key
-      const url = `https://api.themoviedb.org/3/movie/${this.movieId}?api_key=${apiKey}&language=en-US`;
+      const url = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`;
 
       try {
         const response = await axios.get(url); // Fetch movie data from TMDB API
@@ -63,20 +67,26 @@ export default {
 </script>
 
 <style scoped>
+
+.poster{
+  margin-top: 20px;
+  border-radius: 10px;
+}
 .movie-container {
   display: flex;
-  gap: 20px;
+  flex: wrap;
+  /* gap: 20px; */
 }
 .Imgholder {
   width: 30%;
+  margin-left: 100px;
+  margin-top: 20px;
 }
-.movie-poster {
-  width: 100%;
-  border-radius: 10px;
+
+.moviereview{
+  margin-top: 30px;
 }
-.moviereview {
-  flex: 1;
-}
+
 .loading {
   text-align: center;
   font-size: 20px;
