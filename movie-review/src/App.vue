@@ -1,84 +1,68 @@
-<script>
-import Home from './components/Home.vue';
-import Login from './components/Login.vue';
-import AboutUs from './components/AboutUs.vue';
-import AllMovie from './components/AllMovie.vue';
-import Register from './components/UserRegister.vue';
-import ReviewForm from './components/ReviewForm.vue';
-import SingleMovie from './components/SingleMovie.vue';
-
-import './css/main.css';
-
-export default {
-  data() {
-    return {
-      currentRoute: window.location.hash.slice(1) || '/',
-      movieId: null, // Store the movie ID for dynamic routes
-    };
-  },
-  methods: {
-    // Method to determine the current component and set movieId if needed
-    getCurrentComponent() {
-      const [path, id] = this.currentRoute.split('/');
-      
-      // If the path is "movie" and there's an id, set the movieId
-      if (path === 'movie' && id) {
-        this.movieId = id; // Set the movie id
-        return SingleMovie;
-      }
-
-      // <a href="#/about">About</a>
-      // <a href="#/reviewform">Review Form</a>
-      // <a href="#/singlemovie">Single Movie</a>  
-      
-      // Return the appropriate component for static routes
-      const routes = {
-        '/': Home,
-        '/about': AboutUs,
-        '/login': Login,
-        '/register': Register,
-        '/movie': AllMovie,
-        '/reviewform': ReviewForm,
-        '/singlemovie': SingleMovie,
-      };
-      return routes[this.currentRoute] || Home;
-    },
-
-    // Handle hash changes manually and update the current route
-    handleHashChange() {
-      this.currentRoute = window.location.hash.slice(1) || '/';
-    },
-  },
-  created() {
-    // Initial check of the current route
-    this.handleHashChange();
-    
-    // Listen for hash changes to update the route and the component
-    window.addEventListener('hashchange', this.handleHashChange);
-  },
-  beforeUnmount() {
-    // Remove the event listener when the component is destroyed
-    window.removeEventListener('hashchange', this.handleHashChange);
-  },
-};
-</script>
 
 <template>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&family=Jolly+Lodger&family=Luckiest+Guy&display=swap" rel="stylesheet">
-
   <div id="app">
     <nav class="nav">
       <img src="@/assets/logo.png" alt="Logo" class="logoPic">
       <RouterLink to="/"> <button class="nav-button">Home</button> </RouterLink>
       <RouterLink to="/movie"> <button class="nav-button">Movies</button> </RouterLink>
-      <RouterLink to="/login"> <button class="nav-button">Login</button> </RouterLink>
-      <RouterLink to="/register"> <button class="nav-button">Register</button> </RouterLink>
+
+      <!-- Show login/register buttons if not logged in -->
+      <template v-if="!isLoggedIn">
+        <RouterLink to="/login"> <button class="nav-button">Login</button> </RouterLink>
+        <RouterLink to="/register"> <button class="nav-button">Register</button> </RouterLink>
+      </template>
+
+      <!-- Show profile and logout button if logged in -->
+      <template v-else>
+        <RouterLink to="/profile"> <button class="nav-button">Profile ({{ username }})</button> </RouterLink>
+        <button class="nav-button" @click="logout">Logout</button>
+      </template>
+
       <RouterLink to="/about"> <button class="nav-button">About Us</button> </RouterLink>
     </nav>
 
     <!-- Dynamically display the component based on current route -->
-    <RouterView />
+    <RouterView @login="login" />
   </div>
 </template>
+
+<script>
+import './css/main.css';
+
+export default {
+  name: "App",
+  data() {
+    return {
+      isLoggedIn: false, // Local state to track login status
+      username: '', // Store the username if needed
+    };
+  },
+  created() {
+    // Check localStorage for login state when the component is created
+    const savedLoginState = localStorage.getItem('isLoggedIn');
+    if (savedLoginState === 'true') {
+      this.isLoggedIn = true;
+      this.username = localStorage.getItem('username') || '';
+    }
+  },
+  methods: {
+    login(username) {
+      this.isLoggedIn = true;
+      this.username = username;
+      // Save login state to localStorage
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('username', username);
+    },
+    logout() {
+      this.isLoggedIn = false;
+      this.username = '';
+      // Clear login state from localStorage
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+    },
+  },
+};
+</script>

@@ -1,5 +1,6 @@
 <template>
   <div class="profile-container">
+    <br/>
     <h1>Profile</h1>
     <form @submit.prevent="updateProfile">
       <div class="form-group">
@@ -12,6 +13,8 @@
           required
         />
       </div>
+      <br/>
+      <br/>
       <div class="form-group">
         <label for="password">Password:</label>
         <input
@@ -21,9 +24,13 @@
           placeholder="Enter your password"
           required
         />
+        <br/>
+        <br/>
       </div>
-      <button type="submit">Update Profile</button>
+      <button class="probtn" type="submit">Update Profile</button>
     </form>
+    <br/>
+    <br/>
     <p v-if="message">{{ message }}</p>
   </div>
 </template>
@@ -41,6 +48,12 @@ export default {
     };
   },
   methods: {
+   async login() {
+    
+    this.$parent.login(); 
+    this.$router.push('/'); 
+  },
+
     async updateProfile() {
       const mutation = `
         mutation UpdateUser($email: String!, $password: String!) {
@@ -56,7 +69,7 @@ export default {
       const token = localStorage.getItem("token");
 
       try {
-        await request( // Removed the `response` variable
+        await request( 
           "http://localhost:4000/graphql",
           mutation,
           variables,
@@ -75,5 +88,22 @@ export default {
 </script>
 
 <style scoped>
-/* Add your styles here */
+.profile-container {
+  font-family: "Luckiest Guy", serif;
+  letter-spacing: 4px;
+  background: #8DBAD7;
+  color: white;
+  width: 834px;
+  /* height: 710px; */
+  border-radius: 25px;
+  font-size: 25px;
+  justify-self: center;
+  margin-top: 70px;
+}
+
+.probtn{
+  background-color: #034180;
+  border-radius: 25px;
+  color: white;
+}
 </style>
