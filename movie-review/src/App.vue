@@ -6,7 +6,7 @@ import AllMovie from './components/AllMovie.vue';
 import Register from './components/UserRegister.vue';
 import ReviewForm from './components/ReviewForm.vue';
 import SingleMovie from './components/SingleMovie.vue';
-import Profile from './components/Profile.vue;'
+import Profile from './components/Profile.vue';
 
 import './css/main.css';
 
@@ -14,15 +14,15 @@ export default {
   data() {
     return {
       currentRoute: window.location.hash.slice(1) || '/',
-      movieId: null, // Store the movie ID for dynamic routes
+      movieId: null, 
     };
   },
   methods: {
-    // Method to determine the current component and set movieId if needed
+    
     getCurrentComponent() {
       const [path, id] = this.currentRoute.split('/');
       
-      // If the path is "movie" and there's an id, set the movieId
+      
       if (path === 'movie' && id) {
         this.movieId = id; // Set the movie id
         return SingleMovie;
@@ -32,7 +32,7 @@ export default {
       // <a href="#/reviewform">Review Form</a>
       // <a href="#/singlemovie">Single Movie</a>  
       
-      // Return the appropriate component for static routes
+      
       const routes = {
         '/': Home,
         '/about': AboutUs,
@@ -47,20 +47,20 @@ export default {
       return routes[this.currentRoute] || Home;
     },
 
-    // Handle hash changes manually and update the current route
+   
     handleHashChange() {
       this.currentRoute = window.location.hash.slice(1) || '/';
     },
   },
   created() {
-    // Initial check of the current route
+    
     this.handleHashChange();
     
-    // Listen for hash changes to update the route and the component
+    
     window.addEventListener('hashchange', this.handleHashChange);
   },
   beforeUnmount() {
-    // Remove the event listener when the component is destroyed
+   
     window.removeEventListener('hashchange', this.handleHashChange);
   },
 };

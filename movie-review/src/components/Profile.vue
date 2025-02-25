@@ -32,11 +32,12 @@
 import { request } from "graphql-request";
 
 export default {
+  name: "UserProfile",
   data() {
     return {
-      email: "", // Initialize with user's current email
-      password: "", // Initialize with user's current password
-      message: "", // To display success/error messages
+      email: "",
+      password: "",
+      message: "",
     };
   },
   methods: {
@@ -52,8 +53,17 @@ export default {
         password: this.password,
       };
 
+      const token = localStorage.getItem("token");
+
       try {
-        const data = await request("http://localhost:4000/graphql", mutation, variables);
+        await request( // Removed the `response` variable
+          "http://localhost:4000/graphql",
+          mutation,
+          variables,
+          {
+            Authorization: `Bearer ${token}`,
+          }
+        );
         this.message = "Profile updated successfully!";
       } catch (error) {
         console.error("Error updating profile:", error);
@@ -65,5 +75,5 @@ export default {
 </script>
 
 <style scoped>
-
+/* Add your styles here */
 </style>
