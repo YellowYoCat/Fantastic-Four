@@ -123,7 +123,7 @@ input {
   background: #8DBAD7;
   color: white;
   width: 834px;
-  height: 710px;
+  /* height: 710px; */
   border-radius: 25px;
   font-size: 25px;
 }

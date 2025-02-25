@@ -1,13 +1,14 @@
 <template>
   <div id="app">
     <div class="container">
-      
+
       <aside class="sidebar">
         <div class="search">
           <input type="text" v-model="movieSearchQuery" placeholder="Enter Movie Title Here" @input="fetchMovies" />
         </div>
         <div class="search">
-          <input type="text" v-model="actorSearchQuery" placeholder="Enter Actor/Actress Here" @input="fetchMoviesByActor" />
+          <input type="text" v-model="actorSearchQuery" placeholder="Enter Actor/Actress Here"
+            @input="fetchMoviesByActor" />
         </div>
         <div class="filters">
           <h3>Genre</h3>
@@ -19,12 +20,13 @@
           </ul>
         </div>
       </aside>
-     
+
       <main class="movie-grid">
         <div class="movie-card" v-for="movie in filteredMovies" :key="movie.id">
-          <a :href="'#/singlemovie'" class="movie-button">
+          <router-link :to="`/singlemovie/${movie.id}`" class="movie-button">
             <img :src="movie.image" :alt="movie.title" class="movie-image" />
-          </a>
+          </router-link>
+
           <h4 class="luckiest-guy-regular">{{ movie.title }}</h4>
         </div>
       </main>
@@ -139,7 +141,7 @@ export default {
         18: "Drama",
         35: "Comedy"
       };
-      return genreMap[id] || "Unknown"; 
+      return genreMap[id] || "Unknown";
     },
 
   },

@@ -172,7 +172,7 @@ export default {
 }
 
 .card {
-  height: 380px;
+  height: auto;
 }
 
 .error-message {
