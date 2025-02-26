@@ -8,7 +8,11 @@
       
     <div>
       <br>
-      <h1 class="over">{{ movie.title }}</h1>
+      <h1 class="title">{{ movie.title }}</h1>
+      <div>
+        <img class="line" src="@/assets/line.png" alt="Line">
+
+      </div>
       <br>
       <h5 class="over">ESRB rating: {{ movie.adult ? 'R' : 'PG' }}</h5>
       <h5 class="over">Genre: {{ genres }}</h5>
@@ -67,6 +71,13 @@ export default {
 </script>
 
 <style scoped>
+.line{
+  width: 600px;
+}
+
+.title{
+  font-size: 50px;
+}
 
 .poster{
   margin-top: 20px;
@@ -80,7 +91,7 @@ export default {
 .Imgholder {
   width: 30%;
   margin-left: 100px;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 .moviereview{

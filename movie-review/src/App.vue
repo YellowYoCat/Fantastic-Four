@@ -17,7 +17,7 @@
 
       <!-- Show profile and logout button if logged in -->
       <template v-else>
-        <RouterLink to="/profile"> <button class="nav-button">Profile ({{ username }})</button> </RouterLink>
+        <RouterLink to="/profile"> <button class="nav-button">Profile </button> </RouterLink>
         <button class="nav-button" @click="logout">Logout</button>
       </template>
 
@@ -62,6 +62,8 @@ export default {
       // Clear login state from localStorage
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('username');
+
+      this.$router.push('/login');
     },
   },
 };

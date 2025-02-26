@@ -93,6 +93,7 @@ button {
   background-color: #034180;
   border-radius: 25px;
   color: white;
+  width: auto;
 }
 
 /* Forms */
@@ -134,6 +135,7 @@ input {
 .moviereview {
   margin: 125px;
   justify-self: right;
+  padding: 25px;
 }
 
 

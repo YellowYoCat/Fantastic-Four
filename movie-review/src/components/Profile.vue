@@ -70,7 +70,7 @@ export default {
 
       try {
         await request( 
-          "http://localhost:4000/graphql",
+          "http://localhost:5000/graphql",
           mutation,
           variables,
           {
@@ -105,5 +105,6 @@ export default {
   background-color: #034180;
   border-radius: 25px;
   color: white;
+  width: auto;
 }
 </style>

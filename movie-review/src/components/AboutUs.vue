@@ -58,7 +58,7 @@ export default {
         { src: require('@/assets/marvel-rivals-mister-fantastic-mvp-screen-1.avif'), alt: 'Mr Fantastic' },
         { src: require('@/assets/marvel-rivals-invisible-woman-trailer-1.avif'), alt: 'Invisible Woman' },
         { src: require('@/assets/theThing.jpg'), alt: 'The Thing' },
-        { src: require('@/assets/human-torch.jpg'), alt: 'Human Torch' }
+        { src: require('@/assets/HumanTorch.jpg'), alt: 'Human Torch' }
       ]
     };
   }
