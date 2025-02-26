@@ -1,36 +1,24 @@
 <template>
   <div class="profile-container">
-    <br/>
+    <br />
     <h1>Profile</h1>
     <form @submit.prevent="updateProfile">
       <div class="form-group">
         <label for="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          v-model="email"
-          placeholder="Enter your email"
-          required
-        />
+        <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
       </div>
-      <br/>
-      <br/>
+      <br />
+      <br />
       <div class="form-group">
         <label for="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          v-model="password"
-          placeholder="Enter your password"
-          required
-        />
-        <br/>
-        <br/>
+        <input type="password" id="password" v-model="password" placeholder="Enter your password" required />
+        <br />
+        <br />
       </div>
       <button class="probtn" type="submit">Update Profile</button>
     </form>
-    <br/>
-    <br/>
+    <br />
+    <br />
     <p v-if="message">{{ message }}</p>
   </div>
 </template>
@@ -48,18 +36,18 @@ export default {
     };
   },
   methods: {
-   async login() {
-    
-    this.$parent.login(); 
-    this.$router.push('/'); 
-  },
+    async login() {
+
+      this.$parent.login();
+      this.$router.push('/');
+    },
 
     async updateProfile() {
       const mutation = `
-        mutation UpdateUser($email: String!, $password: String!) {
-          updateUser(email: $email, password: $password)
-        }
-      `;
+      mutation UpdateUser($email: String!, $password: String!) {
+        updateUser(email: $email, password: $password)
+      }
+    `;
 
       const variables = {
         email: this.email,
@@ -69,12 +57,14 @@ export default {
       const token = localStorage.getItem("token");
 
       try {
-        await request( 
-          "http://localhost:4000/graphql",
+        await request(
+          "http://localhost:5000/graphql",
           mutation,
           variables,
           {
-            Authorization: `Bearer ${token}`,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
         this.message = "Profile updated successfully!";
@@ -94,14 +84,13 @@ export default {
   background: #8DBAD7;
   color: white;
   width: 834px;
-  /* height: 710px; */
   border-radius: 25px;
   font-size: 25px;
   justify-self: center;
   margin-top: 70px;
 }
 
-.probtn{
+.probtn {
   background-color: #034180;
   border-radius: 25px;
   color: white;

@@ -132,17 +132,17 @@ const resolvers = {
       if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
       throw new Error("Not implemented");
     },
-    updateUser: async ({ email, password }, context) => {
-      if (!context.user) throw new Error("Unauthorized"); // Ensure the user is logged in
+    updateUser: async (_, { email, password }, context) => {
+      if (!context.user) throw new Error("Unauthorized"); 
       try {
-        const user = await User.findOne({ email }).exec();
+        const user = await User.findOne({ email: context.user.email }).exec();
         if (!user) throw new Error("User not found");
-  
-        // Hash the new password
+    
+       
         const hashedPassword = await bcrypt.hash(password, 10);
         user.password = hashedPassword;
         await user.save();
-  
+    
         return "Profile updated successfully";
       } catch (error) {
         console.error("Error updating profile:", error.message);
