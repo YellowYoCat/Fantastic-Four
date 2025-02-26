@@ -25,10 +25,9 @@
 </template>
 
 <script>
-import { request, gql } from 'graphql-request'; 
+import { request, gql } from 'graphql-request';
 
-// GraphQL endpoint
-const GRAPHQL_ENDPOINT = 'http://localhost:5000/graphql'; 
+const GRAPHQL_ENDPOINT = 'http://localhost:5000/graphql';
 
 export default {
   name: 'LoginView',
@@ -36,9 +35,10 @@ export default {
     return {
       email: "",
       password: "",
-      errorMessage: "" 
+      errorMessage: ""
     };
   },
+  
   methods: {
     async login() {
       if (!this.email || !this.password) {
@@ -47,35 +47,33 @@ export default {
       }
 
       try {
-        
         const LOGIN_MUTATION = gql`
           mutation Login($email: String!, $password: String!) {
             login(email: $email, password: $password)
           }
         `;
 
-        
         const data = await request(GRAPHQL_ENDPOINT, LOGIN_MUTATION, {
           email: this.email,
           password: this.password,
         });
 
-       
+        // Save the token to localStorage
         localStorage.setItem('token', data.login);
+
+        // Emit the login event to the parent component (App.vue)
+        this.$emit('login', this.email); // Pass the email (or username) to the parent
 
         alert("Login successful!");
 
-       
-        // this.$router.push("/dashboard"); 
-        window.location.hash = '/dashboard';
+        // Redirect to the Profile page
+        this.$router.push('/profile');
       } catch (error) {
         console.error("Login error:", error);
 
-       
         if (error.response && error.response.errors && error.response.errors.length > 0) {
           this.errorMessage = error.response.errors[0].message;
         } else if (error.message) {
-          
           this.errorMessage = error.message;
         } else {
           this.errorMessage = "Login failed. Please try again.";
@@ -84,9 +82,7 @@ export default {
     }
   }
 };
-
 </script>
-
 
 <style>
 .loginbtn {

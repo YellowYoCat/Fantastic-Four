@@ -52,12 +52,13 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    signup(user: UserSignup!): String
-    login(email: String!, password: String!): String
-    submitReview(movieId: ID!, rating: Int!, review: String!): String
-    deleteReview(reviewId: ID!): String
-    deleteUser(userId: ID!): String
-  }
+  signup(user: UserSignup!): String
+  login(email: String!, password: String!): String
+  updateUser(email: String!, password: String!): String  # Add this line
+  submitReview(movieId: ID!, rating: Int!, review: String!): String
+  deleteReview(reviewId: ID!): String
+  deleteUser(userId: ID!): String
+}
 `;
 
 
@@ -130,7 +131,25 @@ const resolvers = {
     deleteUser: async (_, { userId }, context) => {
       if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
       throw new Error("Not implemented");
-    }
+    },
+    updateUser: async ({ email, password }, context) => {
+      if (!context.user) throw new Error("Unauthorized"); // Ensure the user is logged in
+      try {
+        const user = await User.findOne({ email }).exec();
+        if (!user) throw new Error("User not found");
+  
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+        await user.save();
+  
+        return "Profile updated successfully";
+      } catch (error) {
+        console.error("Error updating profile:", error.message);
+        throw new Error("Failed to update profile");
+      }
+    },
+
   }
 };
 
