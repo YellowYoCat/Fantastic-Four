@@ -5,7 +5,6 @@
     </div>
 
     <div class="moviereview">
-      
     <div>
       <br>
       <h1 class="title">{{ movie.title }}</h1>
@@ -41,17 +40,15 @@ export default {
     };
   },
   created() {
-  console.log("Route params:", this.$route.params); // Debug route params
-  const movieId = this.$route.params.id;
+    const movieId = this.$route.params.id;
 
-  if (!movieId) {
-    console.error("Error: Movie ID is undefined");
-    return;
-  }
+    if (!movieId) {
+      console.error("Error: Movie ID is undefined");
+      return;
+    }
 
-  this.fetchMovieData(movieId);
-}
-,
+    this.fetchMovieData(movieId);
+  },
   methods: {
     async fetchMovieData(movieId) {
       const apiKey = '320b4a81527cb06be689a396ecc7be50'; // Replace with your TMDB API key
@@ -66,6 +63,17 @@ export default {
         console.error('Error fetching movie data:', error); // Handle errors
       }
     },
+
+    goToReviewPage() {
+  this.$router.push({
+    name: 'ReviewForm', // Use the correct route name
+    params: {
+      movieId: this.movie.id,
+      movieTitle: encodeURIComponent(this.movie.title), // Make sure the title is encoded
+    }
+  });
+}
+
   },
 };
 </script>
