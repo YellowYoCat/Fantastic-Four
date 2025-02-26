@@ -5,21 +5,18 @@
     </div>
 
     <div class="moviereview">
-      
-    <div>
-      <br>
-      <h1 class="over">{{ movie.title }}</h1>
-      <br>
-      <h5 class="over">ESRB rating: {{ movie.adult ? 'R' : 'PG' }}</h5>
-      <h5 class="over">Genre: {{ genres }}</h5>
-      <h5 class="over">Duration: {{ movie.runtime }} minutes</h5>
-      <h5 class="over">Ratings: {{ movie.vote_average }} ({{ movie.vote_count }} votes)</h5>
-      <h5 class="over">Summary: {{ movie.overview }}</h5>
-      <br>
-      <a href="#/reviewform">
-        <button class="formbtn">Review Movie</button>
-      </a>
-    </div>
+      <div>
+        <br>
+        <h1 class="over">{{ movie.title }}</h1>
+        <br>
+        <h5 class="over">ESRB rating: {{ movie.adult ? 'R' : 'PG' }}</h5>
+        <h5 class="over">Genre: {{ genres }}</h5>
+        <h5 class="over">Duration: {{ movie.runtime }} minutes</h5>
+        <h5 class="over">Ratings: {{ movie.vote_average }} ({{ movie.vote_count }} votes)</h5>
+        <h5 class="over">Summary: {{ movie.overview }}</h5>
+        <br>
+        <button class="formbtn" @click="goToReviewPage">Review Movie</button>
+      </div>
     </div>
   </div>
 </template>
@@ -37,17 +34,15 @@ export default {
     };
   },
   created() {
-  console.log("Route params:", this.$route.params); // Debug route params
-  const movieId = this.$route.params.id;
+    const movieId = this.$route.params.id;
 
-  if (!movieId) {
-    console.error("Error: Movie ID is undefined");
-    return;
-  }
+    if (!movieId) {
+      console.error("Error: Movie ID is undefined");
+      return;
+    }
 
-  this.fetchMovieData(movieId);
-}
-,
+    this.fetchMovieData(movieId);
+  },
   methods: {
     async fetchMovieData(movieId) {
       const apiKey = '320b4a81527cb06be689a396ecc7be50'; // Replace with your TMDB API key
@@ -62,33 +57,21 @@ export default {
         console.error('Error fetching movie data:', error); // Handle errors
       }
     },
+
+    goToReviewPage() {
+  this.$router.push({
+    name: 'ReviewForm', // Use the correct route name
+    params: {
+      movieId: this.movie.id,
+      movieTitle: encodeURIComponent(this.movie.title), // Make sure the title is encoded
+    }
+  });
+}
+
   },
 };
 </script>
 
 <style scoped>
-
-.poster{
-  margin-top: 20px;
-  border-radius: 10px;
-}
-.movie-container {
-  display: flex;
-  flex: wrap;
-  /* gap: 20px; */
-}
-.Imgholder {
-  width: 30%;
-  margin-left: 100px;
-  margin-top: 20px;
-}
-
-.moviereview{
-  margin-top: 30px;
-}
-
-.loading {
-  text-align: center;
-  font-size: 20px;
-}
+/* Your existing styles */
 </style>

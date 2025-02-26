@@ -1,53 +1,106 @@
-<!-- <template>
+<template>
+
+  <br>
   <div class="card">
-    <br>
-  <h1>Review Movie</h1>
-  <div>
-    <br>
-    <h4 class="formword ">Movie Title</h4>
-    <input class="forminput" v-model="Text" type="email" placeholder="Enter Email" />
-    <h4 class="formword ">Password</h4>
-    <input class="forminput" v-model="Text" placeholder="1/5" />
-    <h4 class="formword ">Confirm Password</h4>
-    <input class="forminput"v-model="Text" placeholder="Review the movie" />
-    <br>
-    <button class="formbtn" @click="register">Rate Movie</button>
-  </div>
+    <h1>Review Movie</h1>
 
-</div>
-</template>
-  
-  <script>
-  export default {
-    name: 'ReviewForm',
-  };
-  </script>
-   -->
+    <div>
+      <!-- Display the movie title -->
+      <h4 class="formword">Movie Title</h4>
+      <p class="forminput">{{ movieTitle }}</p>
 
-   <template> 
-    <div class="card">
-      <br>
-      <h1>Review Movie</h1>
-      <div>
-        <br>
-        <h4 class="formword">Movie Title</h4>
-        <input class="forminput" v-model="Text" type="email" placeholder="Enter movie title" />
-        
-        <h4 class="formword">Password</h4>
-        <input class="forminput" v-model="Text" placeholder="1/5" />
-        
-        <h4 class="formword">Confirm Password</h4>
-        <input class="forminput" v-model="Text" placeholder="Review the movie" />
-        
-        <br>
-        <button class="formbtn" @click="register">Rate Movie</button>
-      </div>
+      <!-- User rating input -->
+      <h4 class="formword">Your Rating</h4>
+      <input 
+        class="forminput" 
+        v-model.number="rating" 
+        type="number" 
+        min="1" 
+        max="5" 
+        placeholder="1-5" 
+      />
+      
+      <!-- User review input -->
+      <h4 class="formword">Review</h4>
+      <textarea 
+        class="forminput" 
+        v-model="review" 
+        placeholder="Review the movie"
+      ></textarea>
+      
+      <button class="formbtn" @click="submitReview">Rate Movie</button>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'ReviewForm',
-  };
-  </script>
-  
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'ReviewForm',
+  props: ['movieId', 'movieTitle'],  // Accept movieTitle as a prop
+
+  data() {
+    return {
+      rating: null,
+      review: '',
+    };
+  },
+
+  methods: {
+    submitReview() {
+      // Validate inputs
+      if (!this.rating || !this.review) {
+        alert('Please fill out all fields.');
+        return;
+      }
+
+      if (this.rating < 1 || this.rating > 5) {
+        alert('Rating must be between 1 and 5.');
+        return;
+      }
+
+      // Submit the review (replace with your API call)
+      console.log('Submitting review:', {
+        movieId: this.movieId,
+        title: this.movieTitle,  // Use the movie title passed as prop
+        rating: this.rating,
+        review: this.review,
+      });
+
+      alert('Review submitted successfully!');
+
+      // Reset form fields
+      this.rating = null;
+      this.review = '';
+    },
+  },
+};
+</script>
+
+
+<style scoped>
+.card {
+  max-width: 500px;
+  margin: auto;
+  padding: 35px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+.formword {
+  margin: 10px 0;
+}
+.forminput {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+}
+.formbtn {
+  padding: 10px 15px;
+  background: #18275b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 27px;
+}
+</style>

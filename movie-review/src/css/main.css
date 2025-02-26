@@ -1,3 +1,80 @@
+/* General Form Styling */
+.review-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Center vertically on the screen */
+}
+
+.review-card {
+  background: #8DBAD7;
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: 0 4px 8px rgba(5, 5, 5, 0.5);
+  color: white;
+  font-family: "Luckiest Guy", serif;
+  letter-spacing: 4px;
+  width: 834px;
+  text-align: center;
+}
+
+/* Form Headings */
+.review-card h2 {
+  font-size: 35px;
+  margin-top: -20px;
+  margin-bottom: 30px;
+}
+
+/* Form Labels */
+label {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 25px;
+  text-align: left;
+}
+
+/* Input and Textarea Styling */
+input, textarea {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 25px;
+  border-radius: 25px;
+  border: solid 3px white;
+  background-color: #b4cede;
+  color: #172139;
+  font-family: "Luckiest Guy", serif;
+  font-size: 20px;
+}
+
+/* Button Styling */
+.review-btn {
+  background-color: #034180;
+  color: white;
+  border-radius: 25px;
+  font-family: "Luckiest Guy", serif;
+  letter-spacing: 4px;
+  font-size: xx-large;
+  padding: 15px 40px;
+  border: solid 5px white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.review-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Responsive Layout */
+@media (max-width: 900px) {
+  .review-card {
+    width: 90%;
+    padding: 20px;
+  }
+
+  input, textarea {
+    width: 100%;
+  }
+}
 /* General Reset */
 body, html {
   height: 100%;
