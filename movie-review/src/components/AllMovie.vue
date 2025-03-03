@@ -45,9 +45,10 @@ export default {
       selectedGenres: [],
       selectedRatings: [],
       movies: [],
-      genres: ["Action", "Animation", "Drama", "Comedy"],
+      genres: [], // Fetch full genre list from API
       ratings: ["G", "PG", "PG-13", "R"],
       filteredMovies: [],
+      genreMap: {} // Store genre ID to name mapping
     };
   },
   methods: {
@@ -65,7 +66,7 @@ export default {
           this.movies = response.data.results.map((movie) => ({
             ...movie,
             image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-            genres: movie.genre_ids.map(id => this.getGenreName(id)), // Convert genre IDs to names
+            genres: movie.genre_ids.map(id => this.genreMap[id] || "Unknown"),
           }));
           this.filterMovies();
         })
@@ -87,7 +88,6 @@ export default {
 
           const actorId = response.data.results[0].id;
 
-          // Fetch movies that the actor is in
           return axios.get(`https://api.themoviedb.org/3/person/${actorId}/movie_credits?api_key=320b4a81527cb06be689a396ecc7be50`);
         })
         .then((response) => {
@@ -96,57 +96,70 @@ export default {
           this.movies = response.data.cast.map((movie) => ({
             ...movie,
             image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-            genres: movie.genre_ids.map(id => this.getGenreName(id)), // Convert genre IDs to names
+            genres: movie.genre_ids.map(id => this.genreMap[id] || "Unknown"),
           }));
           this.filterMovies();
         })
         .catch((error) => console.error("Error fetching actor movies:", error));
     },
 
-    // Fetch popular movies by default
-    fetchPopularMovies() {
-      const apiUrl = 'https://api.themoviedb.org/3/movie/popular?api_key=320b4a81527cb06be689a396ecc7be50';
+    // Fetch movies based on selected genres
+    fetchMoviesByGenre() {
+      if (this.selectedGenres.length === 0) {
+        this.fetchPopularMovies();
+        return;
+      }
+
+      const genreIds = this.selectedGenres.map(genre => Object.keys(this.genreMap).find(key => this.genreMap[key] === genre)).join(',');
+
+      const apiUrl = `https://api.themoviedb.org/3/discover/movie?api_key=320b4a81527cb06be689a396ecc7be50&with_genres=${genreIds}`;
 
       axios.get(apiUrl)
         .then((response) => {
           this.movies = response.data.results.map((movie) => ({
             ...movie,
             image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-            genres: movie.genre_ids.map(id => this.getGenreName(id)), // Convert genre IDs to names
+            genres: movie.genre_ids.map(id => this.genreMap[id] || "Unknown"),
           }));
-          this.filterMovies();
+          this.filteredMovies = this.movies;
+        })
+        .catch((error) => console.error("Error fetching genre movies:", error));
+    },
+
+    // Fetch all available genres from MovieDB
+    fetchGenres() {
+      const apiUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=320b4a81527cb06be689a396ecc7be50`;
+
+      axios.get(apiUrl)
+        .then((response) => {
+          this.genres = response.data.genres.map(genre => genre.name);
+          this.genreMap = Object.fromEntries(response.data.genres.map(genre => [genre.id, genre.name]));
+        })
+        .catch((error) => console.error("Error fetching genres:", error));
+    },
+
+    // Fetch popular movies as the default
+    fetchPopularMovies() {
+      const apiUrl = `https://api.themoviedb.org/3/movie/popular?api_key=320b4a81527cb06be689a396ecc7be50`;
+
+      axios.get(apiUrl)
+        .then((response) => {
+          this.movies = response.data.results.map((movie) => ({
+            ...movie,
+            image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+            genres: movie.genre_ids.map(id => this.genreMap[id] || "Unknown"),
+          }));
+          this.filteredMovies = this.movies;
         })
         .catch((error) => console.error("Error fetching popular movies:", error));
     },
-
-    // Apply filters based on genres and ratings
-    filterMovies() {
-      this.filteredMovies = this.movies.filter((movie) => {
-        const matchesGenre =
-          this.selectedGenres.length === 0 ||
-          this.selectedGenres.some(genre => movie.genres.includes(genre)); // Match genre name
-
-        const matchesRating =
-          this.selectedRatings.length === 0 ||
-          this.selectedRatings.includes(movie.rating);
-
-        return matchesGenre && matchesRating;
-      });
-    },
-
-    getGenreName(id) {
-      const genreMap = {
-        28: "Action",
-        16: "Animation",
-        18: "Drama",
-        35: "Comedy"
-      };
-      return genreMap[id] || "Unknown";
-    },
-
+  },
+  watch: {
+    selectedGenres: "fetchMoviesByGenre", // Automatically fetch when genre changes
   },
   mounted() {
-    this.fetchPopularMovies(); // Fetch movies when the component is mounted
+    this.fetchGenres(); // Fetch genres when component is mounted
+    this.fetchPopularMovies(); // Fetch movies when component is mounted
   },
 };
 </script>
