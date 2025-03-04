@@ -46,6 +46,7 @@ const typeDefs = gql`
     movie(id: ID!): Movie
     searchMovies(query: String!): [Movie]
     reviews(movieId: ID!): [Review]
+    getUser: User
   }
 
   type Mutation {
@@ -61,6 +62,17 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
+    getUser: async (_, __, context) => {
+      if (!context.user) throw new Error("Unauthorized"); // Ensure the user is logged in
+      try {
+        const user = await User.findOne({ email: context.user.email }).exec();
+        if (!user) throw new Error("User not found");
+        return user; 
+      } catch (error) {
+        console.error("Error fetching user:", error.message);
+        throw new Error("Failed to fetch user data");
+      }
+    },
     movie: async (_, { id }) => {
       try {
         const res = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`);
