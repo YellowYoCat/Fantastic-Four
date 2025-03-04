@@ -19,11 +19,11 @@ const routes = [
 
   // Update the path to include movieTitle
   { 
-    path: '/reviewform/:movieId/:movieTitle', // Add movieTitle to the path
+    path: '/reviewform/:id/:movieTitle', // Add movieTitle to the path
     name: 'ReviewForm', 
     component: ReviewForm,
     props: route => ({
-      movieId: route.params.movieId,
+      movieId: route.params.id,
       movieTitle: decodeURIComponent(route.params.movieTitle) // Decode the title properly
     }) // Pass movieId and movieTitle as props
   },

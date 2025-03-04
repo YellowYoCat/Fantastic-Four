@@ -34,47 +34,69 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'ReviewForm',
-  props: ['movieId', 'movieTitle'],  // Accept movieTitle as a prop
-
+  props: ['movieId', 'movieTitle'],
   data() {
     return {
       rating: null,
       review: '',
     };
   },
-
   methods: {
-    submitReview() {
-      // Validate inputs
+    async submitReview() {
       if (!this.rating || !this.review) {
         alert('Please fill out all fields.');
         return;
       }
-
       if (this.rating < 1 || this.rating > 5) {
         alert('Rating must be between 1 and 5.');
         return;
       }
 
-      // Submit the review (replace with your API call)
-      console.log('Submitting review:', {
-        movieId: this.movieId,
-        title: this.movieTitle,  // Use the movie title passed as prop
-        rating: this.rating,
-        review: this.review,
-      });
+      try {
+        // Replace YOUR_AUTH_TOKEN with the user's actual token (from login)
+        const authToken = localStorage.getItem('authToken');
 
-      alert('Review submitted successfully!');
+        const mutation = `
+          mutation SubmitReview($id: ID!, $rating: Int!, $review: String!) {
+            submitReview(movieId: $movieId, rating: $rating, review: $review)
+          }
+        `;
 
-      // Reset form fields
-      this.rating = null;
-      this.review = '';
+        const response = await axios.post('http://localhost:5000/graphql', {
+          query: mutation,
+          variables: {
+            movieId: this.movie.id,
+            rating: this.rating,
+            review: this.review,
+          },
+        }, {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // Pass the token for authentication
+          },
+        });
+
+        console.log('Review submitted:', response.data);
+        alert('Review submitted successfully!');
+
+        // Reset the form
+        this.rating = null;
+        this.review = '';
+
+        // Redirect to the movie page
+        this.$router.push('/movie');
+      } catch (error) {
+        console.error('Error submitting review:', error.response?.data || error.message);
+        alert('Failed to submit review.');
+      }
     },
   },
 };
 </script>
+
 
 
 <style scoped>
