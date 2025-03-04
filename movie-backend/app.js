@@ -14,6 +14,8 @@ const secretKey = 'your_secret_key';
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
+// ✅ Move reviews array here (top-level scope)
+const reviews = []; // Temporary in-memory storage
 
 const typeDefs = gql`
   type Movie {
@@ -50,15 +52,14 @@ const typeDefs = gql`
   }
 
   type Mutation {
-  signup(user: UserSignup!): String
-  login(email: String!, password: String!): String
-  updateUser(email: String!, password: String!): String  # Add this line
-  submitReview(movieId: ID!, rating: Int!, review: String!): String
-  deleteReview(reviewId: ID!): String
-  deleteUser(userId: ID!): String
-}
+    signup(user: UserSignup!): String
+    login(email: String!, password: String!): String
+    updateUser(email: String!, password: String!): String
+    submitReview(movieId: ID!, rating: Int!, review: String!): String
+    deleteReview(reviewId: ID!): String
+    deleteUser(userId: ID!): String
+  }
 `;
-
 
 const resolvers = {
   Query: {
@@ -75,93 +76,120 @@ const resolvers = {
     },
     movie: async (_, { id }) => {
       try {
-        const res = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`);
+        const res = await axios.get(
+          `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`
+        );
         return res.data;
       } catch (error) {
-        console.error("Failed to fetch movie details:", error.message);
-        throw new Error("Failed to fetch movie details");
+        console.error('Failed to fetch movie details:', error.message);
+        throw new Error('Failed to fetch movie details');
       }
     },
     searchMovies: async (_, { query }) => {
       try {
         console.log(`Searching movies with query: ${query}`);
-        const res = await axios.get(`https://api.themoviedb.org/3/search/movie`, { params: { api_key: apiKey, query } });
-        console.log("Search API Response:", res.data);
+        const res = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
+          params: { api_key: apiKey, query },
+        });
+        console.log('Search API Response:', res.data);
         return res.data.results;
       } catch (error) {
-        console.error("Failed to fetch movies:", error.message);
-        throw new Error("Failed to fetch movies");
+        console.error('Failed to fetch movies:', error.message);
+        throw new Error('Failed to fetch movies');
       }
     },
-
-
     reviews: async (_, { movieId }) => {
-      throw new Error("Not implemented");
-    }
+      // Return reviews for the specific movie
+      return reviews.filter((review) => review.movieId === movieId);
+    },
   },
+
   Mutation: {
     signup: async (_, { user }) => {
       const { email, password } = user;
       if (!email || !password) {
-        throw new Error("Email and password are required");
+        throw new Error('Email and password are required');
       }
       try {
         const existingUser = await findUserByEmail(email);
         if (existingUser) {
-          throw new Error("User already exists");
+          throw new Error('User already exists');
         }
         await createUser(email, password);
-        return "User registered successfully";
+        return 'User registered successfully';
       } catch (error) {
-        console.error("Signup error:", error);
-        throw new Error("Failed to register user");
+        console.error('Signup error:', error);
+        throw new Error('Failed to register user');
       }
     },
     login: async (_, { email, password }) => {
       try {
         const user = await findUserByEmail(email);
-        if (!user) throw new Error("User not found");
+        if (!user) throw new Error('User not found');
         const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) throw new Error("Invalid credentials");
-        const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+        if (!validPassword) throw new Error('Invalid credentials');
+        const token = jwt.sign(
+          { userId: user._id, email: user.email },
+          secretKey,
+          { expiresIn: '1h' }
+        );
         return token;
       } catch (error) {
-        throw new Error("Login failed");
+        throw new Error('Login failed');
       }
     },
     submitReview: async (_, { movieId, rating, review }, context) => {
-      if (!context.user) throw new Error("Unauthorized");
-      throw new Error("Not implemented");
+      if (!context.user) throw new Error('Unauthorized');
+
+      try {
+        const newReview = {
+          id: reviews.length + 1, // Temporary unique ID
+          movieId,
+          userId: context.user.userId,
+          rating,
+          review,
+        };
+
+        reviews.push(newReview);
+        console.log('New review added:', newReview);
+
+        return 'Review submitted successfully';
+      } catch (error) {
+        console.error('Error submitting review:', error.message);
+        throw new Error('Failed to submit review');
+      }
     },
     deleteReview: async (_, { reviewId }, context) => {
-      if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
-      throw new Error("Not implemented");
+      if (!context.user || !context.user.isAdmin) throw new Error('Unauthorized');
+
+      const index = reviews.findIndex((r) => r.id === reviewId);
+      if (index === -1) throw new Error('Review not found');
+
+      reviews.splice(index, 1);
+      return 'Review deleted successfully';
     },
     deleteUser: async (_, { userId }, context) => {
-      if (!context.user || !context.user.isAdmin) throw new Error("Unauthorized");
-      throw new Error("Not implemented");
+      if (!context.user || !context.user.isAdmin) throw new Error('Unauthorized');
+      throw new Error('Not implemented');
     },
     updateUser: async (_, { email, password }, context) => {
-      if (!context.user) throw new Error("Unauthorized"); 
+      if (!context.user) throw new Error('Unauthorized');
       try {
         const user = await User.findOne({ email: context.user.email }).exec();
-        if (!user) throw new Error("User not found");
-    
-       
+        if (!user) throw new Error('User not found');
+
         const hashedPassword = await bcrypt.hash(password, 10);
         user.password = hashedPassword;
         await user.save();
-    
-        return "Profile updated successfully";
+
+        return 'Profile updated successfully';
       } catch (error) {
-        console.error("Error updating profile:", error.message);
-        throw new Error("Failed to update profile");
+        console.error('Error updating profile:', error.message);
+        throw new Error('Failed to update profile');
       }
     },
-
-  }
+  },
 };
-
 
 const server = new ApolloServer({
   typeDefs,
@@ -174,7 +202,7 @@ const server = new ApolloServer({
     } catch (error) {
       return { user: null };
     }
-  }
+  },
 });
 
 server.start().then(() => {
