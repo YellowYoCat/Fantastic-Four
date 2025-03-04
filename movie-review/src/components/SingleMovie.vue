@@ -19,9 +19,7 @@
       <h5 class="over">Ratings: {{ movie.vote_average }} ({{ movie.vote_count }} votes)</h5>
       <h5 class="over">Summary: {{ movie.overview }}</h5>
       <br>
-      <a href="#/reviewform">
-        <button class="formbtn">Review Movie</button>
-      </a>
+      <button class="formbtn" @click="goToReviewPage">Review Movie</button>
     </div>
     </div>
   </div>
@@ -66,10 +64,10 @@ export default {
 
     goToReviewPage() {
   this.$router.push({
-    name: 'ReviewForm', // Use the correct route name
+    name: 'ReviewForm',
     params: {
-      movieId: this.movie.id,
-      movieTitle: encodeURIComponent(this.movie.title), // Make sure the title is encoded
+      id: this.movie.id, // Make sure this matches the route definition
+      movieTitle: encodeURIComponent(this.movie.title), // Proper encoding
     }
   });
 }
