@@ -9,7 +9,7 @@ const { User, findUserByEmail, createUser } = require('./dal');
 const app = express();
 const port = 5000;
 const apiKey = '320b4a81527cb06be689a396ecc7be50';
-const secretKey = 'your_secret_key'; // Change this to a secure key
+const secretKey = 'your_secret_key'; 
 
 app.use(cors({ origin: '*' }));
 app.use(express.json());
@@ -63,7 +63,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     getUser: async (_, __, context) => {
-      if (!context.user) throw new Error("Unauthorized"); // Ensure the user is logged in
+      if (!context.user) throw new Error("Unauthorized"); 
       try {
         const user = await User.findOne({ email: context.user.email }).exec();
         if (!user) throw new Error("User not found");

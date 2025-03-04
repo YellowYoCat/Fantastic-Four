@@ -16,8 +16,8 @@ export default {
   name: "UserProfile",
   data() {
     return {
-      user: null, // Store the user's data
-      message: "", // For displaying messages
+      user: null, 
+      message: "",
     };
   },
   mounted() {
@@ -46,7 +46,7 @@ export default {
             },
           }
         );
-        this.user = data.getUser; // Store the user's data
+        this.user = data.getUser; 
       } catch (error) {
         console.error("Error fetching user profile:", error);
         this.message = "Failed to fetch user profile. Please try again.";
