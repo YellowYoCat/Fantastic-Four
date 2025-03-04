@@ -1,24 +1,10 @@
 <template>
   <div class="profile-container">
-    <br />
+    <br/>
     <h1>Profile</h1>
-    <form @submit.prevent="updateProfile">
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" placeholder="Enter your email" required />
-      </div>
-      <br />
-      <br />
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" placeholder="Enter your password" required />
-        <br />
-        <br />
-      </div>
-      <button class="probtn" type="submit">Update Profile</button>
-    </form>
-    <br />
-    <br />
+    <div v-if="user">
+      <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
     <p v-if="message">{{ message }}</p>
   </div>
 </template>
@@ -30,48 +16,40 @@ export default {
   name: "UserProfile",
   data() {
     return {
-      email: "",
-      password: "",
+      user: null, 
       message: "",
     };
   },
+  mounted() {
+    this.fetchUserProfile();
+  },
   methods: {
-    async login() {
-
-      this.$parent.login();
-      this.$router.push('/');
-    },
-
-    async updateProfile() {
-      const mutation = `
-      mutation UpdateUser($email: String!, $password: String!) {
-        updateUser(email: $email, password: $password)
-      }
-    `;
-
-      const variables = {
-        email: this.email,
-        password: this.password,
-      };
+    async fetchUserProfile() {
+      const query = `
+        query GetUser {
+          getUser {
+            email
+          }
+        }
+      `;
 
       const token = localStorage.getItem("token");
 
       try {
-
-        await request(
+        const data = await request(
           "http://localhost:5000/graphql",
-          mutation,
-          variables,
+          query,
+          {},
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        this.message = "Profile updated successfully!";
+        this.user = data.getUser; 
       } catch (error) {
-        console.error("Error updating profile:", error);
-        this.message = "Failed to update profile. Please try again.";
+        console.error("Error fetching user profile:", error);
+        this.message = "Failed to fetch user profile. Please try again.";
       }
     },
   },
@@ -89,12 +67,12 @@ export default {
   font-size: 25px;
   justify-self: center;
   margin-top: 70px;
+  padding: 20px;
+  text-align: center;
 }
 
-.probtn {
-  background-color: #034180;
-  border-radius: 25px;
-  color: white;
-  width: auto;
+p {
+  font-size: 20px;
+  margin-top: 10px;
 }
 </style>
