@@ -26,20 +26,21 @@ export default {
   methods: {
     async fetchUserProfile() {
       const query = `
-        query GetUser {
-          getUser {
+        query GetUser($userId: ID!) {
+          getUser(userId: $userId) {
             email
           }
         }
       `;
 
       const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId"); // Assuming you store userId in localStorage
 
       try {
         const data = await request(
           "http://localhost:5000/graphql",
           query,
-          {},
+          { userId: userId },
           {
             headers: {
               Authorization: `Bearer ${token}`,

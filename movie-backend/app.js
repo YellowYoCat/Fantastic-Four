@@ -33,7 +33,7 @@ const typeDefs = gql`
   }
 
   type User {
-    id: ID!
+    password: String!,
     email: String!
   }
 
