@@ -14,7 +14,6 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/movie', component: AllMovie },
-  { path: '/reviewform', component: ReviewForm },
   { path: '/profile', component: Profile},
 
   // Update the path to include movieTitle

@@ -21,6 +21,19 @@
       <br>
       <button class="formbtn" @click="goToReviewPage">Review Movie</button>
     </div>
+
+     <!-- Reviews Section -->
+     <div v-if="reviews.length > 0">
+        <h2>Reviews</h2>
+        <div v-for="review in reviews" :key="review.id" class="review">
+          <h3>Posted by: Anonoymous</h3>
+          <p>{{ review.content }}</p>
+          <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
+        </div>
+      </div>
+      <div v-else>
+        <p>No reviews available yet. Be the first to review this movie!</p>
+      </div>
     </div>
   </div>
 </template>
@@ -35,6 +48,7 @@ export default {
       movie: {}, // Store movie details
       posterUrl: '', // Movie poster URL
       genres: '', // List of genres
+      reviews: [],
     };
   },
   created() {
@@ -61,6 +75,33 @@ export default {
         console.error('Error fetching movie data:', error); // Handle errors
       }
     },
+    async fetchMovieReviews(movieId) {
+  const query = `
+    query GetReviews($movieId: ID!) {
+      reviews(movieId: $movieId) {
+        id
+        movieId
+        userId
+        rating
+        review
+      }
+    }
+  `;
+  
+  try {
+    const response = await axios.post('http://localhost:5000/graphql', {
+      query,
+      variables: {
+        movieId,
+      },
+    });
+
+    console.log(response);  // Log the response to see if it contains any useful information
+    this.reviews = response.data.data.reviews;  // Store reviews if query is successful
+  } catch (error) {
+    console.error('Error fetching movie reviews:', error.response || error.message);
+  }
+},
 
     goToReviewPage() {
   this.$router.push({
