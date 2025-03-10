@@ -4,7 +4,7 @@
     <h2>Register</h2>
     <form @submit.prevent="handleSubmit">
       <div>
-        <label for="email">Email:</label> 
+        <label for="email">Email:</label>
         <br>
         <input type="email" v-model="email" required />
       </div>
@@ -16,7 +16,7 @@
         <input v-model="username" required />
       </div>
       <br>
-      
+
       <div>
         <label for="password">Password:</label>
         <br>
@@ -31,10 +31,18 @@
       </div>
       <br>
 
+      
+      <div>
+        <label for="isAdmin">Register as Admin:</label>
+        <br>
+        <input type="checkbox" v-model="isAdmin" />
+      </div>
+      <br>
+
       <button class="loginbtn" type="submit">Register</button>
     </form>
 
-    
+   
     <div v-if="showConfirm" class="modal" @click.self="showConfirm = false">
       <div class="modal-content">
         <p>Is this your email: {{ email }}?</p>
@@ -60,6 +68,7 @@ export default {
       username: "",
       password: "",
       confirmPassword: "",
+      isAdmin: false, 
       showConfirm: false,
       errorMessage: "",
     };
@@ -71,14 +80,14 @@ export default {
         return;
       }
 
-      // Val email
+     
       const emailRegex = /^[a-zA-Z0-9_%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
       if (!emailRegex.test(this.email)) {
         this.errorMessage = "Invalid email format.";
         return;
       }
 
-      // Val password 
+     
       if (this.password.length < 8) {
         this.errorMessage = "Password must be at least 8 characters long.";
         return;
@@ -87,20 +96,22 @@ export default {
       this.errorMessage = "";
       this.showConfirm = true;
     },
+   
     async confirmEmail(isConfirmed) {
       if (isConfirmed) {
         try {
-          
+         
           const SIGNUP_MUTATION = gql`
-            mutation Signup($user: UserSignup!) {
-              signup(user: $user)
-            }
-          `;
+        mutation Signup($user: UserSignup!) {
+          signup(user: $user)
+        }
+      `;
 
           const variables = {
             user: {
               email: this.email,
               password: this.password,
+              isAdmin: this.isAdmin, 
             },
           };
 
@@ -109,9 +120,8 @@ export default {
 
           if (data.signup) {
             alert("User registered successfully!");
-            //this.$router.push("/login");
-        window.location.hash = '/login';
-            
+           
+            window.location.hash = '/login';
           } else {
             this.errorMessage = "Registration failed. Please try again.";
           }
@@ -120,22 +130,16 @@ export default {
         } catch (error) {
           console.error("Error during registration:", error);
 
-          
+         
           if (error.response && error.response.errors && error.response.errors.length > 0) {
             this.errorMessage = error.response.errors[0].message;
           } else if (error.message) {
-            
             this.errorMessage = error.message;
           } else {
             this.errorMessage = "Failed to register user. Please try again.";
           }
         }
       } else {
-        this.showConfirm = false;
-      }
-    },
-    handleEsc(event) {
-      if (event.key === "Escape") {
         this.showConfirm = false;
       }
     }
@@ -180,4 +184,3 @@ export default {
   font-size: 14px;
 }
 </style>
-

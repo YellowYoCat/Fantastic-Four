@@ -1,18 +1,31 @@
+
 const { ApolloServer, gql } = require('apollo-server-express');
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User, findUserByEmail, createUser, Review } = require('./dal');
+const { User, findUserByEmail, createUser, Review, createAdminUser, promoteToAdmin } = require('./dal');
 
 const app = express();
 const port = 5000;
 const apiKey = '320b4a81527cb06be689a396ecc7be50';
-const secretKey = 'your_secret_key'; 
+const secretKey = 'your_secret_key';
 
 app.use(cors({ origin: '*' }));
 app.use(express.json());
+
+
+app.post('/create-admin', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const adminUser = await createAdminUser(email, password);
+        res.status(201).json({ message: 'Admin user created successfully', user: adminUser });
+    } catch (error) {
+        console.error('Error creating admin user:', error);
+        res.status(500).json({ message: 'Failed to create admin user' });
+    }
+});
 
 const typeDefs = gql`
   type Movie {
@@ -32,13 +45,15 @@ const typeDefs = gql`
   }
 
   type User {
-    password: String!
+    id: ID!
     email: String!
+    isAdmin: Boolean!
   }
 
   input UserSignup {
     email: String!
     password: String!
+    isAdmin: Boolean!  # Add isAdmin field
   }
 
   type Query {
@@ -55,14 +70,22 @@ const typeDefs = gql`
     submitReview(movieId: ID!, rating: Int!, review: String!): String
     deleteReview(reviewId: ID!): String
     deleteUser(userId: ID!): String
+    makeAdmin(userId: ID!): String
   }
 `;
 
 const resolvers = {
   Query: {
     getUser: async (_, __, context) => {
-      if (!context.user) throw new Error("Unauthorized"); 
-      return await User.findOne({ email: context.user.email });
+      if (!context.user) throw new Error("Unauthorized");
+      try {
+        const user = await User.findOne({ email: context.user.email }).exec();
+        if (!user) throw new Error("User not found");
+        return user;
+      } catch (error) {
+        console.error("Error fetching user:", error.message);
+        throw new Error("Failed to fetch user data");
+      }
     },
     movie: async (_, { id }) => {
       try {
@@ -77,9 +100,11 @@ const resolvers = {
     },
     searchMovies: async (_, { query }) => {
       try {
+        console.log(`Searching movies with query: ${query}`);
         const res = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
           params: { api_key: apiKey, query },
         });
+        console.log('Search API Response:', res.data);
         return res.data.results;
       } catch (error) {
         console.error('Failed to fetch movies:', error.message);
@@ -93,64 +118,89 @@ const resolvers = {
 
   Mutation: {
     signup: async (_, { user }) => {
-      const { email, password } = user;
-      if (!email || !password) throw new Error('Email and password are required');
-      const existingUser = await findUserByEmail(email);
-      if (existingUser) throw new Error('User already exists');
-      await createUser(email, password);
-      return 'User registered successfully';
+      const { email, password, isAdmin } = user; 
+      if (!email || !password) {
+        throw new Error('Email and password are required');
+      }
+      try {
+        const existingUser = await findUserByEmail(email);
+        if (existingUser) {
+          throw new Error('User already exists');
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ email, password: hashedPassword, isAdmin }); // Include isAdmin
+        await newUser.save();
+        return 'User registered successfully';
+      } catch (error) {
+        console.error('Signup error:', error);
+        throw new Error('Failed to register user');
+      }
     },
     login: async (_, { email, password }) => {
-      const user = await findUserByEmail(email);
-      if (!user) throw new Error('User not found');
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (!validPassword) throw new Error('Invalid credentials');
-      return jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+      try {
+        const user = await findUserByEmail(email);
+        if (!user) throw new Error('User not found');
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) throw new Error('Invalid credentials');
+        const token = jwt.sign(
+          { userId: user._id, email: user.email, isAdmin: user.isAdmin },
+          secretKey,
+          { expiresIn: '1h' }
+        );
+        return token;
+      } catch (error) {
+        throw new Error('Login failed');
+      }
     },
-    submitReview: async (_, { movieId, rating, review }) => {
-      console.log('Review Data:', { movieId, rating, review });
-  
-      if (!rating || !review) throw new Error('Rating and review are required');
-      if (rating < 1 || rating > 5) throw new Error('Rating must be between 1 and 5');
-  
-      // For now, we'll just set a dummy userId
-      const dummyUserId = "1"; // Replace with any userId or leave static for testing
-  
-      // Log the review object before saving
-      const newReview = new Review({
+    makeAdmin: async (_, { userId }, context) => {
+      if (!context.user || !context.user.isAdmin) throw new Error('Unauthorized');
+      const user = await promoteToAdmin(userId);
+      if (!user) throw new Error('User not found');
+      return `User ${user.email} is now an admin`;
+    },
+    submitReview: async (_, { movieId, rating, review }, context) => {
+      if (!context.user) throw new Error('Unauthorized');
+      try {
+        const newReview = new Review({
           movieId,
-          userId: dummyUserId, // Use the dummy userId here
+          userId: context.user.userId,
           rating,
           review,
-      });
-  
-      try {
-          const savedReview = await newReview.save();
-          console.log('Review saved:', savedReview); // Log the saved review
-          return 'Review submitted successfully';
+        });
+        await newReview.save();
+        return 'Review submitted successfully';
       } catch (error) {
-          console.error('Error saving review:', error);
-          throw new Error('Error saving review');
+        console.error('Error submitting review:', error.message);
+        throw new Error('Failed to submit review');
       }
-  },
+    },
     deleteReview: async (_, { reviewId }, context) => {
       if (!context.user) throw new Error('Unauthorized');
       const review = await Review.findById(reviewId);
       if (!review) throw new Error('Review not found');
-      if (review.userId !== context.user.userId) throw new Error('Not authorized to delete this review');
+      if (review.userId !== context.user.userId && !context.user.isAdmin) {
+        throw new Error('Unauthorized');
+      }
       await review.deleteOne();
       return 'Review deleted successfully';
     },
-    deleteUser: async () => {
+    deleteUser: async (_, { userId }, context) => {
+      if (!context.user || !context.user.isAdmin) throw new Error('Unauthorized');
       throw new Error('Not implemented');
     },
     updateUser: async (_, { email, password }, context) => {
       if (!context.user) throw new Error('Unauthorized');
-      const user = await User.findOne({ email: context.user.email });
-      if (!user) throw new Error('User not found');
-      user.password = await bcrypt.hash(password, 10);
-      await user.save();
-      return 'Profile updated successfully';
+      try {
+        const user = await User.findOne({ email: context.user.email }).exec();
+        if (!user) throw new Error('User not found');
+        user.email = email;
+        user.password = await bcrypt.hash(password, 10);
+        await user.save();
+        return 'Profile updated successfully';
+      } catch (error) {
+        console.error('Error updating profile:', error.message);
+        throw new Error('Failed to update profile');
+      }
     },
   },
 };
@@ -159,12 +209,12 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req }) => {
-    const token = req.headers.authorization || '';  // Extract token from headers
+    const token = req.headers.authorization || '';
     try {
-      const user = jwt.verify(token, secretKey);  // Verify the token
-      return { user };  // Attach user data to context
+      const user = jwt.verify(token, secretKey);
+      return { user };
     } catch (error) {
-      return { user: null };  // If token is invalid, set user as null
+      return { user: null };
     }
   },
 });
