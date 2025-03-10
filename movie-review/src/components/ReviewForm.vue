@@ -15,7 +15,7 @@
 
       <!-- User review input -->
       <h4 class="formword">Review</h4>
-      <textarea class="forminput" v-model="review" placeholder="Review the movie"></textarea>
+      <textarea class="forminput" v-model="review" placeholder="Review the movie (max 500 characters)" maxlength="500"></textarea>
 
       <button class="formbtn" @click="submitReview">Rate Movie</button>
     </div>
