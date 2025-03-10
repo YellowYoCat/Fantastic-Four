@@ -10,7 +10,6 @@
         <h1 class="title">{{ movie.title }}</h1>
         <div>
           <img class="line" src="@/assets/line.png" alt="Line">
-
         </div>
         <br>
         <h5 class="over">ESRB rating: {{ movie.adult ? 'R' : 'PG' }}</h5>
@@ -22,13 +21,20 @@
         <button class="formbtn" @click="goToReviewPage">Review Movie</button>
       </div>
 
-      <!-- Reviews Section -->
+    
       <div v-if="reviews.length > 0">
         <h2>Reviews</h2>
         <div v-for="review in reviews" :key="review.id" class="review">
-          <!-- <h3>Posted by: Anonoymous</h3> -->
           <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
           <p>{{ review.review }}</p>
+         
+          <button
+            v-if="isAdmin"
+            class="delete-btn"
+            @click="deleteReview(review.id)"
+          >
+            Delete Review
+          </button>
         </div>
       </div>
       <div v-else>
@@ -40,15 +46,17 @@
 
 <script>
 import axios from 'axios';
+import jwtDecode from 'jwt-decode'; 
 
 export default {
   name: 'SingleMovie',
   data() {
     return {
-      movie: {}, // Store movie details
-      posterUrl: '', // Movie poster URL
-      genres: '', // List of genres
-      reviews: [],
+      movie: {}, 
+      posterUrl: '', 
+      genres: '',
+      reviews: [], 
+      isAdmin: false, 
     };
   },
   created() {
@@ -60,35 +68,37 @@ export default {
     }
 
     this.fetchMovieData(movieId);
-    this.fetchMovieReviews(movieId); // Call this function to load reviews
+    this.fetchMovieReviews(movieId); 
+    this.checkAdminStatus(); 
   },
 
   methods: {
     async fetchMovieData(movieId) {
-      const apiKey = '320b4a81527cb06be689a396ecc7be50'; // Replace with your TMDB API key
+      const apiKey = '320b4a81527cb06be689a396ecc7be50'; 
       const url = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`;
 
       try {
-        const response = await axios.get(url); // Fetch movie data from TMDB API
-        this.movie = response.data; // Store movie data
-        this.posterUrl = `https://image.tmdb.org/t/p/w500${this.movie.poster_path}`; // Set poster URL
-        this.genres = this.movie.genres.map(genre => genre.name).join(', '); // Format genres
+        const response = await axios.get(url); 
+        this.movie = response.data; 
+        this.posterUrl = `https://image.tmdb.org/t/p/w500${this.movie.poster_path}`; 
+        this.genres = this.movie.genres.map(genre => genre.name).join(', ');
       } catch (error) {
-        console.error('Error fetching movie data:', error); // Handle errors
+        console.error('Error fetching movie data:', error); 
       }
     },
+
     async fetchMovieReviews(movieId) {
       const query = `
-    query GetReviews($movieId: ID!) {
-      reviews(movieId: $movieId) {
-        id
-        movieId
-        userId
-        rating
-        review
-      }
-    }
-  `;
+        query GetReviews($movieId: ID!) {
+          reviews(movieId: $movieId) {
+            id
+            movieId
+            userId
+            rating
+            review
+          }
+        }
+      `;
 
       try {
         const response = await axios.post('http://localhost:5000/graphql', {
@@ -98,10 +108,59 @@ export default {
           },
         });
 
-        console.log(response);  // Log the response to see if it contains any useful information
-        this.reviews = response.data.data.reviews;  // Store reviews if query is successful
+        console.log(response);  
+        this.reviews = response.data.data.reviews;  
       } catch (error) {
         console.error('Error fetching movie reviews:', error.response || error.message);
+      }
+    },
+
+    async deleteReview(reviewId) {
+      const mutation = `
+        mutation DeleteReview($reviewId: ID!) {
+          deleteReview(reviewId: $reviewId)
+        }
+      `;
+
+      try {
+        const token = localStorage.getItem('token'); 
+        const response = await axios.post(
+          'http://localhost:5000/graphql',
+          {
+            query: mutation,
+            variables: {
+              reviewId,
+            },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.data.deleteReview) {
+          alert('Review deleted successfully!');
+         
+          this.fetchMovieReviews(this.$route.params.id);
+        } else {
+          alert('Failed to delete review.');
+        }
+      } catch (error) {
+        console.error('Error deleting review:', error.response || error.message);
+        alert('Failed to delete review.');
+      }
+    },
+
+    checkAdminStatus() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const decoded = jwtDecode(token); 
+          this.isAdmin = decoded.isAdmin; 
+        } catch (error) {
+          console.error('Error decoding token:', error);
+        }
       }
     },
 
@@ -109,12 +168,11 @@ export default {
       this.$router.push({
         name: 'ReviewForm',
         params: {
-          id: this.movie.id, // Make sure this matches the route definition
-          movieTitle: encodeURIComponent(this.movie.title), // Proper encoding
-        }
+          id: this.movie.id, 
+          movieTitle: encodeURIComponent(this.movie.title), 
+        },
       });
-    }
-
+    },
   },
 };
 </script>
@@ -136,7 +194,7 @@ export default {
 .movie-container {
   display: flex;
   flex: wrap;
-  /* gap: 20px; */
+  
 }
 
 .Imgholder {
@@ -152,5 +210,19 @@ export default {
 .loading {
   text-align: center;
   font-size: 20px;
+}
+
+.delete-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.delete-btn:hover {
+  background-color: #cc0000;
 }
 </style>

@@ -15,6 +15,7 @@
     "core-js": "^3.8.3",
     "graphql": "^16.10.0",
     "graphql-request": "^7.1.2",
+    "jwt-decode": "^4.0.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "vue": "^3.2.13",
