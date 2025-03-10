@@ -5,30 +5,30 @@
     </div>
 
     <div class="moviereview">
-    <div>
-      <br>
-      <h1 class="title">{{ movie.title }}</h1>
       <div>
-        <img class="line" src="@/assets/line.png" alt="Line">
+        <br>
+        <h1 class="title">{{ movie.title }}</h1>
+        <div>
+          <img class="line" src="@/assets/line.png" alt="Line">
 
+        </div>
+        <br>
+        <h5 class="over">ESRB rating: {{ movie.adult ? 'R' : 'PG' }}</h5>
+        <h5 class="over">Genre: {{ genres }}</h5>
+        <h5 class="over">Duration: {{ movie.runtime }} minutes</h5>
+        <h5 class="over">Ratings: {{ movie.vote_average }} ({{ movie.vote_count }} votes)</h5>
+        <h5 class="over">Summary: {{ movie.overview }}</h5>
+        <br>
+        <button class="formbtn" @click="goToReviewPage">Review Movie</button>
       </div>
-      <br>
-      <h5 class="over">ESRB rating: {{ movie.adult ? 'R' : 'PG' }}</h5>
-      <h5 class="over">Genre: {{ genres }}</h5>
-      <h5 class="over">Duration: {{ movie.runtime }} minutes</h5>
-      <h5 class="over">Ratings: {{ movie.vote_average }} ({{ movie.vote_count }} votes)</h5>
-      <h5 class="over">Summary: {{ movie.overview }}</h5>
-      <br>
-      <button class="formbtn" @click="goToReviewPage">Review Movie</button>
-    </div>
 
-     <!-- Reviews Section -->
-     <div v-if="reviews.length > 0">
+      <!-- Reviews Section -->
+      <div v-if="reviews.length > 0">
         <h2>Reviews</h2>
         <div v-for="review in reviews" :key="review.id" class="review">
-          <h3>Posted by: Anonoymous</h3>
-          <p>{{ review.content }}</p>
+          <!-- <h3>Posted by: Anonoymous</h3> -->
           <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
+          <p>{{ review.review }}</p>
         </div>
       </div>
       <div v-else>
@@ -60,7 +60,9 @@ export default {
     }
 
     this.fetchMovieData(movieId);
+    this.fetchMovieReviews(movieId); // Call this function to load reviews
   },
+
   methods: {
     async fetchMovieData(movieId) {
       const apiKey = '320b4a81527cb06be689a396ecc7be50'; // Replace with your TMDB API key
@@ -76,7 +78,7 @@ export default {
       }
     },
     async fetchMovieReviews(movieId) {
-  const query = `
+      const query = `
     query GetReviews($movieId: ID!) {
       reviews(movieId: $movieId) {
         id
@@ -87,61 +89,63 @@ export default {
       }
     }
   `;
-  
-  try {
-    const response = await axios.post('http://localhost:5000/graphql', {
-      query,
-      variables: {
-        movieId,
-      },
-    });
 
-    console.log(response);  // Log the response to see if it contains any useful information
-    this.reviews = response.data.data.reviews;  // Store reviews if query is successful
-  } catch (error) {
-    console.error('Error fetching movie reviews:', error.response || error.message);
-  }
-},
+      try {
+        const response = await axios.post('http://localhost:5000/graphql', {
+          query,
+          variables: {
+            movieId,
+          },
+        });
+
+        console.log(response);  // Log the response to see if it contains any useful information
+        this.reviews = response.data.data.reviews;  // Store reviews if query is successful
+      } catch (error) {
+        console.error('Error fetching movie reviews:', error.response || error.message);
+      }
+    },
 
     goToReviewPage() {
-  this.$router.push({
-    name: 'ReviewForm',
-    params: {
-      id: this.movie.id, // Make sure this matches the route definition
-      movieTitle: encodeURIComponent(this.movie.title), // Proper encoding
+      this.$router.push({
+        name: 'ReviewForm',
+        params: {
+          id: this.movie.id, // Make sure this matches the route definition
+          movieTitle: encodeURIComponent(this.movie.title), // Proper encoding
+        }
+      });
     }
-  });
-}
 
   },
 };
 </script>
 
 <style scoped>
-.line{
+.line {
   width: 600px;
 }
 
-.title{
+.title {
   font-size: 50px;
 }
 
-.poster{
+.poster {
   margin-top: 20px;
   border-radius: 10px;
 }
+
 .movie-container {
   display: flex;
   flex: wrap;
   /* gap: 20px; */
 }
+
 .Imgholder {
   width: 30%;
   margin-left: 100px;
   margin-top: 50px;
 }
 
-.moviereview{
+.moviereview {
   margin-top: 30px;
 }
 

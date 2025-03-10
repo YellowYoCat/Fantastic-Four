@@ -194,6 +194,13 @@ input {
   margin: 35px;
 }
 
+.review{
+  background-color: #034180;
+  border-radius: 25px;
+  border: rgb(95, 116, 214) double 10px;
+  padding: 5px;
+  margin-bottom: 15px;
+}
 /* Cards */
 .card, .moviereview {
   font-family: "Luckiest Guy", serif;
