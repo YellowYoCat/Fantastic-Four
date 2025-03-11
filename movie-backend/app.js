@@ -81,7 +81,7 @@ const resolvers = {
       try {
         const user = await User.findOne({ email: context.user.email }).exec();
         if (!user) throw new Error("User not found");
-        return user;
+        return { id: user._id, email: user.email, isAdmin: user.isAdmin };
       } catch (error) {
         console.error("Error fetching user:", error.message);
         throw new Error("Failed to fetch user data");
@@ -159,28 +159,41 @@ const resolvers = {
       return `User ${user.email} is now an admin`;
     },
     submitReview: async (_, { movieId, rating, review }, context) => {
-      if (!context.user) throw new Error('Unauthorized');
+      // Hardcode userId here instead of using context.user.userId
+      const hardcodedUserId = "1";  // Replace with a valid user ID if needed
+      
+      console.log("Submit Review Called", { movieId, rating, review, userId: hardcodedUserId });
+    
       try {
         const newReview = new Review({
           movieId,
-          userId: context.user.userId,
+          userId: hardcodedUserId,  // Hardcoded userId
           rating,
           review,
         });
+    
+        console.log("Review to save:", newReview);
+    
         await newReview.save();
-        return 'Review submitted successfully';
+    
+        console.log("Review saved successfully");
+    
+        return "Review submitted successfully";
       } catch (error) {
-        console.error('Error submitting review:', error.message);
-        throw new Error('Failed to submit review');
+        console.error("Error submitting review:", error.message);
+        throw new Error("Failed to submit review");
       }
     },
     deleteReview: async (_, { reviewId }, context) => {
       if (!context.user) throw new Error('Unauthorized');
       const review = await Review.findById(reviewId);
       if (!review) throw new Error('Review not found');
+      
+      // Allow deletion if the user is the owner or an admin
       if (review.userId !== context.user.userId && !context.user.isAdmin) {
         throw new Error('Unauthorized');
       }
+      
       await review.deleteOne();
       return 'Review deleted successfully';
     },

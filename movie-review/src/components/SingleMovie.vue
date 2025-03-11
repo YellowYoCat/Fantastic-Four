@@ -28,11 +28,7 @@
           <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
           <p>{{ review.review }}</p>
          
-          <button
-            v-if="isAdmin"
-            class="delete-btn"
-            @click="deleteReview(review.id)"
-          >
+          <button v-if="isAdmin" class="delete-btn" @click="deleteReview(review.id)" >
             Delete Review
           </button>
         </div>
@@ -116,40 +112,34 @@ export default {
     },
 
     async deleteReview(reviewId) {
-      const mutation = `
-        mutation DeleteReview($reviewId: ID!) {
-          deleteReview(reviewId: $reviewId)
-        }
-      `;
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You must be logged in as an admin to delete reviews.');
+      return;
+    }
 
-      try {
-        const token = localStorage.getItem('token'); 
-        const response = await axios.post(
-          'http://localhost:5000/graphql',
-          {
-            query: mutation,
-            variables: {
-              reviewId,
-            },
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+    try {
+      const response = await axios.post('http://localhost:5000/graphql', {
+        query: `
+          mutation {
+            deleteReview(reviewId: "${reviewId}")
           }
-        );
+        `,
+      }, {
+        headers: { Authorization: token }
+      });
 
-        if (response.data.data.deleteReview) {
-          alert('Review deleted successfully!');
-         
-          this.fetchMovieReviews(this.$route.params.id);
-        } else {
-          alert('Failed to delete review.');
-        }
-      } catch (error) {
-        console.error('Error deleting review:', error.response || error.message);
+      if (response.data.errors) {
+        console.error('Error deleting review:', response.data.errors);
         alert('Failed to delete review.');
+        return;
       }
+
+      this.reviews = this.reviews.filter(review => review.id !== reviewId);
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      alert('An error occurred while deleting the review.');
+    }
     },
 
     checkAdminStatus() {
