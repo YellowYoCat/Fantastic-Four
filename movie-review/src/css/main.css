@@ -27,7 +27,8 @@
 
 /* Form Labels */
 label {
-  display: block;
+  display: flex;
+  justify-content: center;
   margin-bottom: 15px;
   font-size: 25px;
   text-align: left;

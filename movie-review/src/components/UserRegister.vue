@@ -35,6 +35,7 @@
       <div>
         <label for="isAdmin">Register as Admin:</label>
         <br>
+        <!-- <button> <input v-model="isAdmin"/></button> -->
         <input type="checkbox" v-model="isAdmin" />
       </div>
       <br>
