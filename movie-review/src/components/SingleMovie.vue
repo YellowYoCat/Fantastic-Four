@@ -46,7 +46,7 @@
 
 <script>
 import axios from 'axios';
-import jwtDecode from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   name: 'SingleMovie',
@@ -153,16 +153,17 @@ export default {
     },
 
     checkAdminStatus() {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const decoded = jwtDecode(token); 
-          this.isAdmin = decoded.isAdmin; 
-        } catch (error) {
-          console.error('Error decoding token:', error);
-        }
-      }
-    },
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded); // Debugging
+      this.isAdmin = decoded.isAdmin || false;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+    }
+  }
+},
 
     goToReviewPage() {
       this.$router.push({
@@ -215,6 +216,7 @@ export default {
 .delete-btn {
   background-color: #ff4d4d;
   color: white;
+  font-size: 20px;
   border: none;
   padding: 5px 10px;
   border-radius: 5px;
